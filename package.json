@@ -31,6 +31,6 @@
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
-    "nodemon": "^1.12.1"
+    "nodemon": "^1.18.9"
   }
 }
