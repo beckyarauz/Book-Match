@@ -1,0 +1,44 @@
+<h1>Profile Setup</h1>
+<h2>Hello {{username}}</h2>
+
+<div id="form-container">
+
+</div>
+<form action="/private" method="POST" id="setup">
+  {{!-- <label for="firstName">Name: </label> --}}
+  <input type="text" name="firstName" placeholder="your first name">
+  {{!-- <label for="lastName">Name: </label> --}}
+  <input type="text" name="lastName" placeholder="your last name">
+
+
+  <input type="text" name="item1" placeholder="I'm awesome">
+  <input type="text" name="item2" placeholder="I love dogs">
+  <input type="text" name="item3" placeholder="I know how to make cereal">
+
+  
+  <textarea rows="4" cols="50" name="description" form="setup">
+  Here you Can put  whatever you want
+  </textarea>
+
+
+
+  <input type="text" name="profilePic" id="profile-pic" class="hidden">
+
+  <input type="text" name="username" id="input-username" class="hidden" value={{username}}>
+
+  <button type="submit">Submit</button>
+
+</form>
+<div id="profilePic">
+  <!-- <img src="images/becky.jpg" alt=""> -->
+  <img id="result" src="">
+</div>
+
+<div id="croppie-upload">
+  <form id="form1" runat="server">
+    <input type="file" id="imgInp" />
+    <img id="my-image" src="#" />
+    <button type="button" id="use">Upload</button>
+</div>
+
+</form>
