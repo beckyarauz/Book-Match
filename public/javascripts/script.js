@@ -1,29 +1,54 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-
+  var resize;
   console.log('IronGenerator JS imported successfully!');
-
+  $('#my-image').toggle();
   function readURL(input) {
+    
     if (input.files && input.files[0]) {
       var reader = new FileReader();
       reader.onload = function(e) {
+        console.log('my image:',$('#my-image').attr('src'));
+
+        if(resize instanceof Croppie){
+          console.log('instance!');
+          
+          resize.destroy();
+          resize = null;
+        }
+
         $('#my-image').attr('src', e.target.result);
-        var resize = new Croppie($('#my-image')[0], {
+
+        resize = new Croppie($('#my-image')[0], {
           viewport: { width: 150, height: 150, type:'circle' },
           boundary: { width: 200, height: 200 },
-          // enforceBoundary: true,
           showZoomer: false,
           enableOrientation: true
         });
-        $('#use').fadeIn();
+
         $('#use').on('click', function() {
-          resize.result('base64').then(function(dataImg) {
+          
+          if($('#result').attr('src').length > 0){
+            $('#result').attr('src','');
+          }
+          
+          resize.result('base64')
+          .then(function(dataImg) {
+            console.log('dataImg',dataImg);
             var data = [{ image: dataImg }, { name: 'profilePic.jpg' }];
             // use ajax to send data to php
             $('#result').attr('src', dataImg);
-            $('#profile-pic').val(dataImg) ;
+
+
+            $('#input-profilePic').val(dataImg) ;
+            // $('.croppie-container').toggle();
+            var myIm = $('#my-image')[0].outerHTML;
+          
+          $('.croppie-container').remove();
+          $('#my-image').remove();
+          $('#croppie-upload').append('<img id="my-image" src="#" />');
+          $('#my-image').toggle();
           })
-          $('.croppie-container').toggle();
         })
       }
       reader.readAsDataURL(input.files[0]);
@@ -33,7 +58,6 @@ document.addEventListener('DOMContentLoaded', () => {
   
   
   $("#imgInp").change(function() {
-    $('.croppie-container').toggle();
     readURL(this);
   });
 

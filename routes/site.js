@@ -16,29 +16,28 @@ site.get("/home", (req, res, next) => {
 });
 
 
-site.get('/private', /*ensureLogin.ensureLoggedIn('/login'),*/ (req, res) => {
+site.get('/private', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 //   //dummi info
-  const username = 'jamie009';
-  const firstname = 'James';
-  const lastname = 'Bond';
-  const userpicture = "https://www.star2.com/wp-content/uploads/2018/05/str2_apjamesbond_tbkho-150x150.jpg";
+//   const username = 'jamie009';
+//   const firstname = 'James';
+//   const lastname = 'Bond';
+//   const userpicture = "https://www.star2.com/wp-content/uploads/2018/05/str2_apjamesbond_tbkho-150x150.jpg";
 
-  res.render('private',{username,firstname,lastname,userpicture});
-  // res.render('private');
+//   res.render('private',{username,firstname,lastname,userpicture});
 
 // //dummi end
   
-  // User.findOne({username:req.user.username})
-  // .then(user => {
-  //   res.render('private',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture});
-  // })
-  // .catch(err => console.log(err));
+  User.findOne({username:req.user.username})
+  .then(user => {
+    res.render('private',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture});
+  })
+  .catch(err => console.log(err));
     
 });
 
 
 
-site.post('/private', /*ensureLogin.ensureLoggedIn('/login'),*/ (req, res) => {
+site.post('/private', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 
 
   const firstname = req.body.firstName;
@@ -66,12 +65,12 @@ site.post('/private', /*ensureLogin.ensureLoggedIn('/login'),*/ (req, res) => {
   
 });
 
-// site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-//     res.render('profileSetup',{username: req.user.username});
-// });
-site.get('/profile-setup',  (req, res) => {
-    res.render('profileSetup',{user: req.user});
+site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
+    res.render('profileSetup',{username: req.user.username});
 });
+// site.get('/profile-setup',  (req, res) => {
+//     res.render('profileSetup',{user: req.user});
+// });
 
 
 

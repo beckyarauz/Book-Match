@@ -12,19 +12,19 @@ body {
 a {
   color: #00B7FF; }
 
-#form {
+#form-auth {
   margin: 30px auto;
   width: 380px; }
 
-#form label {
+#form-auth label {
   color: #666;
   display: inline-block;
   margin-bottom: 10px;
   text-align: center;
   width: 100%; }
 
-#form input,
-#form button {
+#form-auth input,
+#form-auth button {
   box-sizing: border-box;
   font-size: 14px;
   outline: 0;
@@ -32,7 +32,7 @@ a {
   width: 100%;
   margin-bottom: 20px; }
 
-#form button {
+#form-auth button {
   background: #43a3e6;
   border: 1px solid #43a3e6;
   border-radius: 4px;
@@ -46,7 +46,7 @@ a {
   transition: .3s ease background;
   width: 100%; }
 
-#form button:hover {
+#form-auth button:hover {
   background: #fff;
   color: #43a3e6;
   transition: .3s ease background; }
@@ -81,6 +81,21 @@ a {
   margin-bottom: 10px;
   margin-top: 10px; }
 
+.pic {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+#profile-pic {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center; }
+
+#input-label {
+  max-width: 100px; }
+
 .bottom {
   display: flex;
   justify-content: space-around;
@@ -89,7 +104,11 @@ a {
 .icon {
   display: flex;
   justify-content: center;
-  align-items: center; }
+  align-items: center;
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  line-height: 18px; }
 
 .card {
   padding-top: 20px;
@@ -301,11 +320,5 @@ a {
 .card.hovercard .bottom {
   padding: 0 20px;
   margin-bottom: 17px; }
-
-.btn {
-  border-radius: 50%;
-  width: 32px;
-  height: 32px;
-  line-height: 18px; }
 
 /*# sourceMappingURL=style.css.map */
