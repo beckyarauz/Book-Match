@@ -1,11 +1,7 @@
-<h1>This is your Profile</h1>
-{{!-- <div class="gif">
-    <iframe src="https://giphy.com/embed/HP5dest4oOHf2" width="480" height="269" frameBorder="0" class="giphy-embed" allowFullScreen></iframe><p><a href="https://giphy.com/gifs/reactiongifs-HP5dest4oOHf2">via GIPHY</a></p>
-</div> --}}
-<p>Hello {{username}}!</p>
+<div class="container-profile">
 
 <div class="container">
-	<div class="row">
+	<div class="row card-row">
 		<div class="col-lg-3 col-sm-6">
             <div class="card hovercard">
                 <div class="cardheader">
@@ -17,26 +13,23 @@
                 </div>
                 <div class="info">
                     <div class="title">
-                        <a target="_blank" href="https://scripteden.com/">{{firstname}}</a>
+                        <a id="profile-name" target="_blank" href="http://www.codewizard.tech/">{{firstname}}</a>
                     </div>
+                    <div class="username">{{username}}</div>
                     <div class="desc">Passionate designer</div>
                     <div class="desc">Curious developer</div>
                     <div class="desc">Tech geek</div>
                 </div>
                 <div class="bottom">
-                    <a class="btn btn-primary btn-twitter btn-sm icon" href="https://twitter.com/webmaniac">
+                    <a class="btn btn-twitter btn-twitter btn-sm icon" href="https://twitter.com/beckyarauz">
                         <i class="fab fa-twitter"></i>
                     </a>
-                    <a class="btn btn-danger btn-sm icon" rel="publisher"
-                       href="https://plus.google.com/+ahmshahnuralam">
-                        <i class="fab fa-google-plus"></i>
-                    </a>
-                    <a class="btn btn-primary btn-sm icon" rel="publisher"
-                       href="https://plus.google.com/shahnuralam">
+                    <a class="btn btn-fb btn-sm icon" rel="publisher"
+                       href="https://www.facebook.com/rebeca.cabanas">
                         <i class="fab fa-facebook-f"></i>
                     </a>
-                    <a class="btn btn-warning btn-sm icon" rel="publisher" href="https://plus.google.com/shahnuralam">
-                        <i class="fab fa-behance"></i>
+                    <a class="btn btn-insta btn-sm icon" rel="publisher" href="https://www.instagram.com/beckyarauz">
+                        <i class="fab fa-instagram"></i>
                     </a>
                 </div>
             </div>
@@ -46,4 +39,6 @@
 	</div>
 </div>
 
-<a href="/logout">Logout</a>
+{{!-- <a href="/logout">Logout</a> --}}
+</div>
+

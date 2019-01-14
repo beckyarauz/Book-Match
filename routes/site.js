@@ -16,7 +16,29 @@ site.get("/home", (req, res, next) => {
 });
 
 
-site.get('/private', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
+// site.get('/private',/*ensureLogin.ensureLoggedIn('/login'),*/ (req, res) => {
+//   //dummi info
+//   const username = 'jamie009';
+//   const firstname = 'James';
+//   const lastname = 'Bond';
+//   const description = "I'm awesome";
+//   const fav_books = [
+//     {
+//     title: 'Fantastic Beasts and Where to Find Them',
+//     img: 'https://images-na.ssl-images-amazon.com/images/I/61U0wM7aHDL.jpg',
+//   },  
+//     {
+//     title: 'Crimes of Grindelwald',
+//     img: 'https://ewedit.files.wordpress.com/2018/05/crimes-of-grindelwald.jpg',
+//   },  
+// ];
+//   const userpicture = "https://www.star2.com/wp-content/uploads/2018/05/str2_apjamesbond_tbkho-150x150.jpg";
+
+//   res.render('profile',{username,firstname,lastname,userpicture,description,fav_books});
+
+// //dummi end
+// });
+site.get('/private',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 //   //dummi info
 //   const username = 'jamie009';
 //   const firstname = 'James';
@@ -43,10 +65,7 @@ site.post('/private', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   const firstname = req.body.firstName;
   const lastname = req.body.lastName;
   const userpicture = req.body.profilePic;
-
-  const item1 = req.body.item1;
-  const item2 = req.body.item2;
-  const item3 = req.body.item3;
+  const description = req.body.description;
   
   User.findOne({username:req.user.username})
   .then(user => {
@@ -54,12 +73,12 @@ site.post('/private', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       firstName: firstname,
       lastName: lastname,
       picture: userpicture,
-      userWords: [item1,item2,item3],
+      description: description,
     })
     user.save();
     console.log(user);
 
-    res.render('private',{username: user.username,firstname,lastname,userpicture});
+    res.render('profile',{username: user.username,firstname,lastname,userpicture});
   })
   .catch(err => console.log(err));
   
@@ -69,7 +88,7 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     res.render('profileSetup',{username: req.user.username});
 });
 // site.get('/profile-setup',  (req, res) => {
-//     res.render('profileSetup',{user: req.user});
+//     res.render('profileSetup',{user: 'beckyarauz'});
 // });
 
 

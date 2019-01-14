@@ -1,21 +1,27 @@
-<form action="/login" method="POST" id="form-auth">
+<div class="form-container">
   <h2>Login</h2>
+  <form action="/login" method="POST" id="form-auth">
 
-  <label for="username">Username</label>
-  <input type="text" name="username" placeholder="obiwan">
+<div class="form-group">
+    <label for="username">Username</label>
+    <input name="username" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter username">
+    <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+  </div>
+  <div class="form-group">
+    <label for="password">Password</label>
+    <input type="password" name="password" class="form-control" placeholder="Password">
+  </div>
 
-  <label for="password">Password</label>
-  <input type="password" name="password" placeholder="thatsnomoon">
-
-  {{#if message }}
+    {{#if message }}
     <div class="message">{{ message }}</div>
-  {{/if}}
+    {{/if}}
 
-  <button>Sign in</button>
+    <button class="btn btn-book" type="submit">Log in</button>
 
-  
 
-  <p class="account-message">
-    Don't have an account? <a href="/signup">Sign up</a>
-  </p>
-</form>
+
+    <p class="account-message">
+      Don't have an account? <a href="/signup">Sign up</a>
+    </p>
+  </form>
+</div>

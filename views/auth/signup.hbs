@@ -1,30 +1,38 @@
-<form id="form-auth" action="/signup" method="POST">
-  <label for="username">Username</label><br>
-  <input id="username" type="text" name="username" placeholder="AnakinSkywalker">
+<div class="form-container">
+  <h2>Sign Up</h2>
 
-  <label for="password">Password</label><br>
-  <input id="password" type="password" name="password" placeholder="DeathStar">
+  <form id="form-auth" action="/signup" method="POST">
+    <div class="form-group">
+      <label for="username">Username</label>
+      <input name="username" type="text" class="form-control" aria-describedby="emailHelp" placeholder="Enter username">
+      <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" name="password" class="form-control" placeholder="Password">
+    </div>
 
 
-  <div class="g-recaptcha" data-sitekey="6LfGD4cUAAAAAKdMzBP_P0_kX5iYfctjiLjWrQOk" data-theme="dark"></div>
-  <button type="submit">Create account</button>
+    <div class="g-recaptcha" data-sitekey="6LfGD4cUAAAAAKdMzBP_P0_kX5iYfctjiLjWrQOk" data-theme="dark"></div>
+    <button class="btn btn-book" type="submit">Create account</button>
 
-  <a href="auth/slack">Sign in with Slack</a>
-  
-  {{#if message}}
-  <div class="message">{{ message }}</div>
-  {{/if}}
+    <a href="auth/slack">Sign in with Slack</a>
 
-  {{#if suggestion}}
-  <div class="message">
-    <ul>
-    {{#each suggestion}}
-      <li>{{ this }}</li>
-    {{/each}}
-    </ul>
-  </div>
-  {{/if}}
+    {{#if message}}
+    <div class="message">{{ message }}</div>
+    {{/if}}
 
-</form>
+    {{#if suggestion}}
+    <div class="message">
+      <ul>
+        {{#each suggestion}}
+        <li>{{ this }}</li>
+        {{/each}}
+      </ul>
+    </div>
+    {{/if}}
+
+  </form>
+</div>
 
 <script src='https://www.google.com/recaptcha/api.js'></script>

@@ -8,9 +8,12 @@ const userSchema = new Schema({
   firstName: String,
   lastName: String,
   picture: String,
-  userWords:{
+  description: String,
+  fav_books:{
     type: Array,
-    default : ["I'm Awesome","I love dogs", "SpongeBob"]
+  },
+  read_books:{
+    type: Array,
   },
   role: {
     type: String,
