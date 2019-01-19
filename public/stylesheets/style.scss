@@ -80,6 +80,17 @@ button.bg-book-dark:focus {
 }
 
 
+//home
+.btn-home{
+  background-color: var(--main-bg-color)!important;
+}
+
+.card-home {
+  background-color: var(--title-color)!important;
+}
+
+
+
 //signup and login forms
 #form-auth{
   display: flex;
@@ -152,9 +163,9 @@ margin:20px;
 //Profile-Setup
 #profile-pic{
   width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  // display: flex;
+  // justify-content: center;
+  // align-items: center;
 }
 .input-group{
   max-width: 150px;

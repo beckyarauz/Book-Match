@@ -59,6 +59,12 @@ button.bg-book-dark:hover,
 button.bg-book-dark:focus {
   background-color: #dae0e5 !important; }
 
+.btn-home {
+  background-color: var(--main-bg-color) !important; }
+
+.card-home {
+  background-color: var(--title-color) !important; }
+
 #form-auth {
   display: flex;
   justify-content: center;
@@ -123,10 +129,7 @@ button.bg-book-dark:focus {
   width: 100%; }
 
 #profile-pic {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center; }
+  width: 100%; }
 
 .input-group {
   max-width: 150px;

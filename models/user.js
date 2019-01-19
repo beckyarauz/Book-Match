@@ -5,7 +5,7 @@ const userSchema = new Schema({
   username: String,
   password: String,
   slackID: String,
-  firstName: String,
+  fbID: String,
   lastName: String,
   picture: String,
   description: String,
@@ -17,7 +17,7 @@ const userSchema = new Schema({
   },
   role: {
     type: String,
-    enum : ['GUEST', 'EDITOR', 'ADMIN'],
+    enum : ['GUEST', 'ADMIN'],
     default : 'GUEST'
   },
 }, {

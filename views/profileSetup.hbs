@@ -21,32 +21,34 @@
           </div>
           <div class="row">
             <div class="col-md-12">
-              
-                <div class="form-group row pic">
-                  
-                  <div id="profile-pic">
-                    <div id="profilePic">
-                      <img id="result" src="">
-                    </div>
-                    <div id="croppie-upload">
-                      <form id="form1" runat="server">
-                        <div class="input-group">
-                          <div class="input-group-prepend" type="submit">
-                            <span class="input-group-text" id="use" >Upload</span>
-                          </div>
-                          <div class="custom-file">
-                            <input type="file" class="custom-file-input" id="imgInp" accept="image/*">
-                            <label id="input-label" class="custom-file-label" for="imgInp"></label>
-                          </div>
-                        </div>
-                        <img id="my-image" src="#" />
-                      </form>
-                    </div>
+
+              <div class="form-group row pic">
+
+                <div id="profile-pic">
+                  <div id="profilePic">
+                    <img id="result" src="">
                   </div>
+                  <div id="croppie-upload">
+                    <form id="form1" runat="server">
 
+                      <div class="input-group">
+                        <div class="input-group-prepend" type="submit">
+                          <span class="input-group-text" id="use">Upload</span>
+                        </div>
+                        <div class="custom-file">
+                          <input type="file" class="custom-file-input" id="imgInp" accept="image/*">
+                          <label id="input-label" class="custom-file-label" for="imgInp"></label>
+                        </div>
+                      </div>
+                      <img id="my-image" src="#" />
+                    </form>
 
+                  </div>
                 </div>
-                <form action="/private" method="POST" id="setup">
+
+
+              </div>
+              <form action="/private" method="POST" id="setup">
                 <div class="form-group row">
                   <input type="text" name="profilePic" id="input-profilePic" class="hidden">
 
@@ -71,14 +73,7 @@
                     <input id="text" name="nickname" placeholder="Nick Name" class="form-control here" type="text">
                   </div>
                 </div>
-                <div class="form-group row">
-                  <label for="select" class="col-4 col-form-label">Display Name public as</label>
-                  <div class="col-8">
-                    <select id="select" name="select" class="custom-select">
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
+
                 <div class="form-group row">
                   <label for="email" class="col-4 col-form-label">Email*</label>
                   <div class="col-8">
@@ -109,7 +104,7 @@
                     <button name="submit" type="submit" class="btn btn-primary">Update My Profile</button>
                   </div>
                 </div>
-                </form>
+              </form>
             </div>
           </div>
 

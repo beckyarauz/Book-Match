@@ -16112,8 +16112,8 @@ fieldset[disabled] .form-group.is-focused .togglebutton label {
 .header-filter:after {
   position: absolute;
   z-index: 1;
-  width: 100%;
-  height: 100%;
+  width: 100vw;
+  height: 100vh;
   display: block;
   left: 0;
   top: 0;
@@ -17348,7 +17348,7 @@ footer .pull-center {
 }
 
 .profile-page .page-header {
-  height: 380px;
+  height: 100vh;
   background-position: top center;
 }
 
