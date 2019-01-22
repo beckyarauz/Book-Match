@@ -14,8 +14,10 @@ const bcryptSalt = 10;
 const passport = require('passport');
 // First example
 const LocalStrategy = require('passport-local').Strategy;
-// Second example
-const SlackStrategy = require('passport-slack').Strategy;
+// set up Facebook strategy
+
+
+
 const flash = require('connect-flash');
 const app_name = require('./package.json').name;
 
@@ -25,7 +27,7 @@ const User = require('./models/user');
 // Mongoose configuration
 mongoose.Promise = Promise;
 mongoose
-  .connect('mongodb://localhost/basic-auth', { useNewUrlParser: true })
+  .connect('mongodb://localhost/book-match', { useNewUrlParser: true })
   .then((x) => {
     console.log(`Connected to Mongo! Database name: "${x.connections[0].name}"`);
   })
@@ -80,33 +82,8 @@ passport.use(new LocalStrategy((username, password, next) => {
   });
 }));
 
-// SlackStrategy
-passport.use(new SlackStrategy({
-  clientID: process.env.SLACK_CLIENT_ID,
-  clientSecret: process.env.SLACK_CLIENT_SECRET,
-}, (accessToken, refreshToken, profile, done) => {
-  console.log('DEBUG profile', profile);
-  User.findOne({ slackID: profile.id })
-    .then((user) => {
-      if (user) {
+// Facebook Strategy
 
-        return done(null, user);
-      }
-      
-      const newUser = new User({
-        slackID: profile.id,
-      });
-
-      newUser.save()
-        .then((user) => {
-          done(null, newUser);
-        });
-    })
-    .catch((error) => {
-      console.log(error);
-      done(error);
-    });
-}));
 
 // app.js
 app.use(passport.initialize());
