@@ -75,16 +75,16 @@ site.get('/admin', checkAdmin, (req, res) => {
 });
 
 
-site.get('/search', (req, res) => {
-  res.render('public/search');
-})
+// site.get('/search', (req, res) => {
+//   res.render('public/search');
+// })
 // site.get('/book', (req, res) => {
 //   console.log(res);
 //   // const url = https://www.googleapis.com/books/v1/volumes?q=potter+inauthor:keyes&key=AIzaSyBhlg3RrbFdAHDlOn4baYiKmRNqpRztwSc
 
 //   res.render('public/book');
 // })
-site.get('/books', (req, res, next) => {
+site.get('/search', (req, res, next) => {
   const list = req.query.book.split(' ').join('+');
   const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=AIzaSyBhlg3RrbFdAHDlOn4baYiKmRNqpRztwSc`
   let items;
