@@ -1,12 +1,15 @@
-<h1>Search</h1>
 
-<form action="/search" method="GET">
-    <input name="book" type="text" class="form-control"  placeholder="Enter book">
-    <button type="submit"> Submit</button>
-</form>
+
+
 
 
 <div class="container book-container" >
+    <h1>Search</h1>
+    <form action="/search" method="GET">
+    <input name="book" type="text" class="form-control"  placeholder="Enter book">
+    <button type="submit"> Submit</button>
+    </form>
+
 {{#each items}}
     <div class="card" style="width: 10rem;">
   <img class="card-img-top" src={{this.imageLinks.smallThumbnail}} alt="Card image cap">

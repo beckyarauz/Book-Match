@@ -105,10 +105,10 @@ site.get('/search', (req, res, next) => {
         });
         
         // trimmedString = trimmedString.map(str => str.substr(0, Math.min(str.length, str.lastIndexOf(" "))))
-        console.log(trimmedString);
+        // console.log(trimmedString);
         // trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")))
         // console.log(trimmedString);
-        res.render('public/book',{items, trimmedString});
+        res.render('public/search',{items});
       }
   })
   
