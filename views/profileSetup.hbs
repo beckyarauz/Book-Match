@@ -57,14 +57,14 @@
 
                   <label for="name" class="col-4 col-form-label">First Name</label>
                   <div class="col-8">
-                    <input id="name" name="firstName" placeholder="First Name" class="form-control here" type="text"
+                    <input id="name" name="firstName" value="{{firstname}}" placeholder="{{firstname}}" class="form-control here" type="text"
                       required="required">
                   </div>
                 </div>
                 <div class="form-group row">
                   <label for="lastname" class="col-4 col-form-label">Last Name</label>
                   <div class="col-8">
-                    <input id="lastname" name="lastName" placeholder="Last Name" class="form-control here" type="text">
+                    <input id="lastname" name="lastName" value="{{lastname}}" placeholder="{{lastname}}" class="form-control here" type="text">
                   </div>
                 </div>
                 <div class="form-group row">
@@ -90,7 +90,7 @@
                 <div class="form-group row">
                   <label for="description" class="col-4 col-form-label">Description</label>
                   <div class="col-8">
-                    <textarea id="description" name="description" cols="40" rows="4" class="form-control"></textarea>
+                    <textarea id="description" name="description" placeholder="{{description}}" cols="40" rows="4" class="form-control">{{description}}</textarea>
                   </div>
                 </div>
                 <div class="form-group row">
