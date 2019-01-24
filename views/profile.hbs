@@ -99,6 +99,14 @@
                     <br> Books
                   </a>
                 </li>
+                {{#if isProfileOwner}}
+                <li class="nav-item">
+                  <a class="nav-link" href="/profile-setup/">
+                  {{!-- role="tab" data-toggle="tab"> --}}
+                    <i class="material-icons">account_box</i>Edit <br>Profile
+                  </a>
+                </li>
+                {{/if}}
               </ul>
             </div>
           </div>
