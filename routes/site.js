@@ -16,11 +16,11 @@ site.get("/home", (req, res, next) => {
 });
 
 
-site.get('/private',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
+site.get('/profile',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
   User.findOne({username:req.user.username})
   .then(user => {
-    res.render('private',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture});
+    res.render('profile',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture});
   })
   .catch(err => console.log(err));
     
@@ -60,7 +60,12 @@ site.get('/admin', checkAdmin, (req, res) => {
 });
 
 
-
+site.get('/search', (req, res) => {
+  res.render('public/search');
+})
+site.post('/book', (req, res) => {
+  // https://www.googleapis.com/books/v1/volumes?q=flowers+inauthor:keyes&key=yourAPIKey
+})
 
 
 function checkRoles(role) {
