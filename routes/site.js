@@ -136,10 +136,10 @@ site.get('/search', (req, res, next) => {
 
 });
 
-site.post('/search', (req, res, next)=>{
-  console.log('body',req.body.starred);
-  res.send();
-})
+// site.post('/search', (req, res, next)=>{
+//   console.log('body',req.body.starred);
+//   res.render('partials/book');
+// })
 
 
 function checkRoles(role) {

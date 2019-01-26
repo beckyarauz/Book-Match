@@ -10,7 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.star-book').click(function(e) {
     // e.preventDefault();
     $("#book-input").val('true');
-    $("#testForm").submit();
+    console.log($("#book-input").val());
+    $( "#testForm" ).on( "submit", function( event ) {
+      event.preventDefault();
+    });
   });
   //book icons event handlers end
   
