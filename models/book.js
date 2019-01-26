@@ -5,7 +5,7 @@ const bookSchema = new Schema({
   title: String,
   description: String,
   googleBooksID: String,
-  pictureURL: String
+  pictureURL: String,
 });
 
 const book = mongoose.Model('book',bookSchema);
