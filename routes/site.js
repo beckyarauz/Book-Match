@@ -75,21 +75,23 @@ site.get('/admin', checkAdmin, (req, res) => {
 });
 
 
-site.get('/search', (req, res) => {
-  res.render('public/search');
-})
+// site.get('/search', (req, res) => {
+//   res.render('public/search');
+// })
 // site.get('/book', (req, res) => {
 //   console.log(res);
 //   // const url = https://www.googleapis.com/books/v1/volumes?q=potter+inauthor:keyes&key=AIzaSyBhlg3RrbFdAHDlOn4baYiKmRNqpRztwSc
 
 //   res.render('public/book');
 // })
-site.get('/books', (req, res, next) => {
-  const list = req.query.book.split(' ').join('+');
-  const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=AIzaSyBhlg3RrbFdAHDlOn4baYiKmRNqpRztwSc`
-  let items;
-  request(url, function (error, response, body) {
+site.get('/search', (req, res, next) => {
+  if( req.query.book != undefined){
+    const list = req.query.book.split(' ').join('+');
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}`
+    let items;
+    request(url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
+        
         let info = JSON.parse(body);
         items = info.items.map(item => item.volumeInfo);
         // console.log(items);
@@ -105,12 +107,18 @@ site.get('/books', (req, res, next) => {
         });
         
         // trimmedString = trimmedString.map(str => str.substr(0, Math.min(str.length, str.lastIndexOf(" "))))
-        console.log(trimmedString);
+        // console.log(trimmedString);
         // trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")))
         // console.log(trimmedString);
-        res.render('public/book',{items, trimmedString});
+        res.render('public/search',{items});
+        return;
       }
   })
+  }
+  
+  
+
+  res.render('public/search');
   
 });
 

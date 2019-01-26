@@ -1,6 +1,22 @@
-<h1>Search</h1>
 
-<form action="/books" method="GET">
+
+
+
+
+<div class="container book-container" >
+    <h1>Search</h1>
+    <form action="/search" method="GET">
     <input name="book" type="text" class="form-control"  placeholder="Enter book">
     <button type="submit"> Submit</button>
-</form>
+    </form>
+
+{{#each items}}
+    <div class="card" style="width: 10rem;">
+  <img class="card-img-top" src={{this.imageLinks.smallThumbnail}} alt="Card image cap">
+  <div class="card-body">
+    <p class="card-text">{{this.title}}</p>
+    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+  </div>
+</div>
+{{/each}}
+</div>
