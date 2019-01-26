@@ -4,23 +4,35 @@ const Schema   = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   password: String,
-  slackID: String,
-  fbID: String,
   firstName:String,
   lastName: String,
   picture: String,
   description: String,
-  fav_books:{
-    type: Array,
-  },
-  read_books:{
-    type: Array,
-  },
+  country: String,
+  city: String,
+  languages:[String],
+  categories:[String],
+  interests:[String],
+  friends:[mongoose.Schema.Types.ObjectId],
+  fbID: String,
+  igID: String,
+  slackID: String,
+  twitterID: String,
   role: {
     type: String,
     enum : ['GUEST', 'ADMIN'],
     default : 'GUEST'
   },
+  
+  //deprecated: books are stored in bookLists collection now 
+  /*
+  fav_books:{
+    type: Array,
+  },
+  read_books:{
+    type: Array,
+  },*/
+ 
 }, {
   timestamps: true
 });

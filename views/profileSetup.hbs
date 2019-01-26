@@ -26,7 +26,7 @@
 
                 <div id="profile-pic">
                   <div id="profilePic">
-                    <img id="result" src="">
+                    <img id="result" src="{{userpicture}}">
                   </div>
                   <div id="croppie-upload">
                     <form id="form1" runat="server">
@@ -67,6 +67,8 @@
                     <input id="lastname" name="lastName" value="{{lastname}}" placeholder="{{lastname}}" class="form-control here" type="text">
                   </div>
                 </div>
+                
+                {{!-- 
                 <div class="form-group row">
                   <label for="text" class="col-4 col-form-label">Nick Name</label>
                   <div class="col-8">
@@ -86,13 +88,51 @@
                   <div class="col-8">
                     <input id="website" name="website" placeholder="website" class="form-control here" type="text">
                   </div>
-                </div>
+                </div> --}}
                 <div class="form-group row">
                   <label for="description" class="col-4 col-form-label">Description</label>
                   <div class="col-8">
                     <textarea id="description" name="description" placeholder="{{description}}" cols="40" rows="4" class="form-control">{{description}}</textarea>
                   </div>
                 </div>
+                <div class="form-group row">
+                  <label for="country" class="col-4 col-form-label">Country</label>
+                  <div class="col-8">
+                    <input id="country" name="usercountry" value="{{usercountry}}" class="form-control here" type="text">
+                  </div>
+                </div>
+                
+                <div class="form-group row">
+                  <label for="city" class="col-4 col-form-label">City</label>
+                  <div class="col-8">
+                    <input id="city" name="usercity" value="{{usercity}}" class="form-control here" type="text">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="fbID" class="col-4 col-form-label">Facebook ID</label>
+                  <div class="col-8">
+                    <input id="fbID" name="userfbID" value="{{userfbID}}" class="form-control here" type="text">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="igID" class="col-4 col-form-label">Instagram ID</label>
+                  <div class="col-8">
+                    <input id="igID" name="userigID" value="{{userigID}}" class="form-control here" type="text">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="slackID" class="col-4 col-form-label">Slack ID</label>
+                  <div class="col-8">
+                    <input id="slackID" name="userslackID" value="{{userslackID}}" class="form-control here" type="text">
+                  </div>
+                </div>
+                <div class="form-group row">
+                  <label for="twitterID" class="col-4 col-form-label">Twitter ID</label>
+                  <div class="col-8">
+                    <input id="twitterID" name="usertwitterID" value="{{usertwitterID}}" class="form-control here" type="text">
+                  </div>
+                </div>
+
                 <div class="form-group row">
                   <label for="newpass" class="col-4 col-form-label">New Password</label>
                   <div class="col-8">

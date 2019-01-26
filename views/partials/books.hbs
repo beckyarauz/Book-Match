@@ -1,11 +1,4 @@
-<div class="container book-container flex flex-column">
-  <h1>Search</h1>
-  <form action="/search" method="GET">
-    <input name="book" type="text" class="form-control" placeholder="Enter book" id="book-search">
-    <button class="btn" type="submit"> Submit</button>
-  </form>
-  <div class="container flex wrap">
-    {{#each items}}
+ {{#each info}}
     <div class="card card-book" style="width: 10rem;">
       <img class="card-img-top" src={{this.imageLinks.thumbnail}} alt="Card image cap">
       <div class="card-body card-body-book">
@@ -21,6 +14,3 @@
       </div>
     </div>
     {{/each}}
-  </div>
-
-</div>

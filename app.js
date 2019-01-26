@@ -1,5 +1,7 @@
 require('dotenv').config();
 
+var fs = require('fs');
+
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const express = require('express');
@@ -103,7 +105,20 @@ app.set('view engine', 'hbs');
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(favicon(path.join(__dirname, 'public', 'images', 'favicon.ico')));
 
+//partials reader
+const partialsDir = path.join(__dirname, 'views', 'partials');
 
+const filenames = fs.readdirSync(partialsDir);
+filenames.forEach(function (filename) {
+  const matches = /^([^.]+).hbs$/.exec(filename);
+  if (!matches) {
+    return;
+  }
+  const name = matches[1];
+  const template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
+  hbs.registerPartial(name, template);
+  console.log(hbs);
+});
 // default value for title local
 app.locals.title = 'Express - Generated with IronGenerator';
 
