@@ -59,8 +59,7 @@ a {
   padding: 0; }
 
 .bg-book-dark {
-  color: var(--text-color);
-  background-color: var(--navbar-bg-color); }
+  background-color: var(--navbar-bg-color) !important; }
 
 a.bg-book-dark:hover, a.bg-book-dark:focus,
 button.bg-book-dark:hover,
