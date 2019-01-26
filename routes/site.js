@@ -7,6 +7,8 @@ const checkEditor = checkRoles('EDITOR');
 const checkAdmin = checkRoles('ADMIN');
 
 const User = require('../models/user');
+const Book = require('../models/book');
+const BookList = require('../models/bookList');
 
 site.get("/", (req, res, next) => {
   res.render("home");
@@ -133,14 +135,14 @@ site.get('/search', (req, res, next) => {
   } else {
     res.render('search');
   }
-
 });
 
 site.post('/search', (req, res, next)=>{
   if(req.body.action != undefined){
     console.log(req.body.action);
+
   } 
-})
+});
 
 
 function checkRoles(role) {
