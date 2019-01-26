@@ -157,10 +157,20 @@ site.get('/search', (req, res, next) => {
   }
 });
 
-site.post('/search', (req, res, next)=>{
-  if(req.body.action != undefined){
-    console.log(req.body.action);
-
+site.post('/search',ensureLogin.ensureLoggedIn('/login'), (req, res, next)=>{
+  const action = req.body.action;
+  if(action.starred){
+    console.log('YEAH');
+    BookList.findOne({'bookId': action.id})
+    .then(data =>{
+      if(data === null){
+        User.findOne({username: req.user.username})
+        .then( user => {
+          createBookList(user._id, action.book, action.starred);
+        })
+      }
+    })
+    .catch(e => console.log(e));
   } 
 });
 
@@ -175,6 +185,19 @@ function checkRoles(role) {
   }
 }
 
+function createBookList(userId, bookId, starred){
+  bookList = new BookList ({
+    userId: userId,  
+    bookId: bookId, 
+    starred: starred
+  })
+
+  bookList.save()
+  .then(book =>{
+    console.log('Book was saved!');
+  })
+  .catch(e => console.log(e));
+}
 
 
 module.exports = site;
