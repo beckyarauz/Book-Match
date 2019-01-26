@@ -117,7 +117,6 @@ filenames.forEach(function (filename) {
   const name = matches[1];
   const template = fs.readFileSync(partialsDir + '/' + filename, 'utf8');
   hbs.registerPartial(name, template);
-  console.log(hbs);
 });
 // default value for title local
 app.locals.title = 'Express - Generated with IronGenerator';
