@@ -85,11 +85,13 @@ site.get('/admin', checkAdmin, (req, res) => {
 //   res.render('public/book');
 // })
 site.get('/search', (req, res, next) => {
-  const list = req.query.book.split(' ').join('+');
-  const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=AIzaSyBhlg3RrbFdAHDlOn4baYiKmRNqpRztwSc`
-  let items;
-  request(url, function (error, response, body) {
+  if( req.query.book != undefined){
+    const list = req.query.book.split(' ').join('+');
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}`
+    let items;
+    request(url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
+        
         let info = JSON.parse(body);
         items = info.items.map(item => item.volumeInfo);
         // console.log(items);
@@ -109,8 +111,14 @@ site.get('/search', (req, res, next) => {
         // trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")))
         // console.log(trimmedString);
         res.render('public/search',{items});
+        return;
       }
   })
+  }
+  
+  
+
+  res.render('public/search');
   
 });
 
