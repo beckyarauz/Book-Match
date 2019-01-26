@@ -2,19 +2,16 @@
 document.addEventListener('DOMContentLoaded', () => {
   console.log('IronGenerator JS imported successfully!');
 
-  //book icons event handlers
-  // $( '.star-book' ).click(function() {
-  //   alert( "Handler for .click() called." );
-  // });
-
   $('.star-book').click(function(e) {
-    // e.preventDefault();
-    $("#book-input").val('true');
-    console.log($("#book-input").val());
-    $( "#testForm" ).on( "submit", function( event ) {
-      event.preventDefault();
+    console.log($(this).parent().attr('id'));
+    const bookId = $(this).parent().attr('id');
+    axios.post('/search' , { action: {
+      starred:true,
+      book: bookId
+    } 
     });
   });
+ 
   //book icons event handlers end
   
   var resize;

@@ -7,5 +7,5 @@ const bookListSchema = new Schema({
   starred: Boolean                          //true if user has starred/favourited this book
 });
 
-const bookList = mongoose.Model('bookList',bookListSchema);
-module.exports(bookList);
+const BookList = mongoose.model('BookList',bookListSchema);
+module.exports = BookList;

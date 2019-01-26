@@ -23,15 +23,6 @@ const userSchema = new Schema({
     enum : ['GUEST', 'ADMIN'],
     default : 'GUEST'
   },
-  
-  //deprecated: books are stored in bookLists collection now 
-  /*
-  fav_books:{
-    type: Array,
-  },
-  read_books:{
-    type: Array,
-  },*/
  
 }, {
   timestamps: true
