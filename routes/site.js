@@ -20,7 +20,18 @@ site.get('/profile',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
   User.findOne({username:req.user.username})
   .then(user => {
-    res.render('profile',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture,isProfileOwner:true});
+    res.render('profile',{
+      username: user.username,
+      firstname: user.firstName,
+      lastname: user.lastName,
+      userpicture:user.picture,
+      usercountry: user.country,
+      usercity: user.city,
+      userfbID: user.fbID,
+      userigID: user.igID,
+      userslackID: user.slackID,
+      usertwitterID: user.twitterID,
+      isProfileOwner:true});
   })
   .catch(err => console.log(err));
     
@@ -32,25 +43,74 @@ site.get('/profile/:username',ensureLogin.ensureLoggedIn('/login'), (req, res) =
   User.findOne({username:req.params.username})
   .then(user => {
     let isOwner = req.params.username==req.user.username;
-    res.render('profile',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture,isProfileOwner:isOwner});
+    res.render('profile',{
+      username: user.username,
+      firstname: user.firstName,
+      lastname: user.lastName,
+      userpicture:user.picture,
+      usercountry: user.country,
+      usercity: user.city,
+      userfbID: user.fbID,
+      userigID: user.igID,
+      userslackID: user.slackID,
+      usertwitterID: user.twitterID,
+      isProfileOwner:isOwner});
   })
   .catch(err => console.log(err));
     
 });
 
-site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  const firstname = req.body.firstName;
-  const lastname = req.body.lastName;
-  const userpicture = req.body.profilePic;
-  const description = req.body.description;
-  console.log("form data: "+firstname+" "+lastname+" "+description);
+site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   User.findOne({username:req.user.username})
   .then(user => {
+    res.render('profileSetup',{
+      username: user.username,
+      firstname: user.firstName,
+      lastname: user.lastName,
+      userpicture:user.picture,
+      description:user.description,
+      usercountry: user.country,
+      usercity: user.city,
+      userfbID: user.fbID,
+      userigID: user.igID,
+      userslackID: user.slackID,
+      usertwitterID: user.twitterID});
+  })
+  .catch(err => console.log(err));
+});
+
+site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
+  /*const firstname = req.body.firstName;
+  const lastname = req.body.lastName;
+  const userpicture = req.body.profilePic;
+  const description = req.body.description;*/
+  let updatedUser = {
+    username: req.user.username,
+    firstname: req.body.firstName,
+    lastname: req.body.lastName,
+    userpicture: req.body.profilePic,
+    description: req.body.description,
+    country: req.body.usercountry,
+    city: req.body.usercity,
+    fbID: req.body.userfbID,
+    igID: req.body.userigID,
+    slackID: req.body.userslackID,
+    twitterID: req.body.usertwitterID
+  }
+  console.log("form data: "+updatedUser.firstname+" "+updatedUser.lastname+" "+updatedUser.description);
+  User.findOne({username:updatedUser.username})
+  .then(user => {
     user.set({
-      firstName: firstname,
-      lastName: lastname,
-      picture: userpicture,
-      description: description,
+      firstName: updatedUser.firstname,
+      lastName: updatedUser.lastname,
+      picture: updatedUser.userpicture,
+      description: updatedUser.description,
+      country: updatedUser.country,
+      city: updatedUser.city,
+      fbID: updatedUser.fbID,
+      igID: updatedUser.igID,
+      slackID: updatedUser.slackID,
+      twitterID: updatedUser.twitterID
     })
     user.save();
     console.log('user saved');
@@ -62,13 +122,6 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
   
 });
 
-site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  User.findOne({username:req.user.username})
-  .then(user => {
-    res.render('profileSetup',{username: user.username,firstname: user.firstName,lastname: user.lastName,userpicture:user.picture,description:user.description});
-  })
-  .catch(err => console.log(err));
-});
 
 site.get('/admin', checkAdmin, (req, res) => {
   res.render('admin', {user: req.user});
