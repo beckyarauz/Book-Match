@@ -15,6 +15,14 @@ h1, h2, h3 {
 a {
   color: #00B7FF; }
 
+.flex {
+  display: flex;
+  justify-content: center; }
+
+.wrap {
+  flex-wrap: wrap;
+  justify-content: space-around; }
+
 .bg-main {
   background-color: var(--main-bg-color);
   min-height: 100vh; }
@@ -186,6 +194,23 @@ button.bg-book-dark:focus {
 
 .book-container {
   margin-top: 150px; }
+
+.card-book {
+  margin: 5px 3px !important;
+  background-color: white !important;
+  padding: 0 0 10px 0 !important;
+  text-align: center; }
+
+.card-book-text {
+  font-size: 0.8rem; }
+
+.card-book-text-container {
+  margin-bottom: 25px; }
+
+.book-icons {
+  position: absolute;
+  bottom: 10px;
+  right: 40%; }
 
 .bottom {
   display: flex;

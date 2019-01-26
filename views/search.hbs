@@ -1,0 +1,12 @@
+<div class="container book-container flex flex-column">
+  <h1>Search</h1>
+  <form action="/search" method="GET">
+    <input name="book" type="text" class="form-control" placeholder="Enter book" id="book-search">
+    <button class="btn" type="submit"> Submit</button>
+  </form>
+  <div class="container flex wrap">
+    {{> books info=items}}
+   
+  </div>
+
+</div>

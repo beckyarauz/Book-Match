@@ -1,10 +1,10 @@
-const express    = require("express");
+const express = require("express");
 const site = express.Router();
 const ensureLogin = require('connect-ensure-login');
 const request = require('request');
-const checkGuest  = checkRoles('GUEST');
+const checkGuest = checkRoles('GUEST');
 const checkEditor = checkRoles('EDITOR');
-const checkAdmin  = checkRoles('ADMIN');
+const checkAdmin = checkRoles('ADMIN');
 
 const User = require('../models/user');
 
@@ -15,7 +15,7 @@ site.get("/home", (req, res, next) => {
   res.render("home");
 });
 
-//without params: render profile page for logged in user
+// //without params: render profile page for logged in user
 site.get('/profile',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
   User.findOne({username:req.user.username})
@@ -37,7 +37,7 @@ site.get('/profile',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     
 });
 
-//with params: render profile page for the user listed in the request
+// //with params: render profile page for the user listed in the request
 site.get('/profile/:username',ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
   User.findOne({username:req.params.username})
@@ -80,10 +80,6 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 });
 
 site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  /*const firstname = req.body.firstName;
-  const lastname = req.body.lastName;
-  const userpicture = req.body.profilePic;
-  const description = req.body.description;*/
   let updatedUser = {
     username: req.user.username,
     firstname: req.body.firstName,
@@ -96,8 +92,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     igID: req.body.userigID,
     slackID: req.body.userslackID,
     twitterID: req.body.usertwitterID
-  }
-  console.log("form data: "+updatedUser.firstname+" "+updatedUser.lastname+" "+updatedUser.description);
+  };
+  console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
   User.findOne({username:updatedUser.username})
   .then(user => {
     user.set({
@@ -111,73 +107,43 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
       igID: updatedUser.igID,
       slackID: updatedUser.slackID,
       twitterID: updatedUser.twitterID
-    })
-    user.save();
-    console.log('user saved');
-    console.log(user);
+    })})
+    .catch(err => console.log(err));
 
-    res.redirect('/profile');
-  })
-  .catch(err => console.log(err));
-  
 });
 
 
 site.get('/admin', checkAdmin, (req, res) => {
-  res.render('admin', {user: req.user});
+  res.render('admin', { user: req.user });
 });
 
-
-// site.get('/search', (req, res) => {
-//   res.render('public/search');
-// })
-// site.get('/book', (req, res) => {
-//   console.log(res);
-//   // const url = https://www.googleapis.com/books/v1/volumes?q=potter+inauthor:keyes&key=AIzaSyBhlg3RrbFdAHDlOn4baYiKmRNqpRztwSc
-
-//   res.render('public/book');
-// })
 site.get('/search', (req, res, next) => {
-  if( req.query.book != undefined){
+  if (req.query.book != undefined) {
     const list = req.query.book.split(' ').join('+');
-    const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}`
+    const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
     let items;
     request(url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
-        
         let info = JSON.parse(body);
         items = info.items.map(item => item.volumeInfo);
-        // console.log(items);
-
-        const maxLength = 100; // maximum number of characters to extract
-
-        //trim the string to the maximum length
-        // var trimmedString = items.map(item => item.description.substr(0, maxLength));
-        var trimmedString = items
-        .map(item => {
-          if(item.description !== undefined && item.description !== null && item.description.length > 0)
-          item.description.substr(0, maxLength)
-        });
-        
-        // trimmedString = trimmedString.map(str => str.substr(0, Math.min(str.length, str.lastIndexOf(" "))))
-        // console.log(trimmedString);
-        // trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")))
-        // console.log(trimmedString);
-        res.render('public/search',{items});
+        res.render('search', { items });
         return;
       }
-  })
+    })
+  } else {
+    res.render('search');
   }
-  
-  
 
-  res.render('public/search');
-  
 });
+
+site.post('/search', (req, res, next)=>{
+  console.log('body',req.body.starred);
+  res.send();
+})
 
 
 function checkRoles(role) {
-  return function(req, res, next) {
+  return function (req, res, next) {
     if (req.isAuthenticated() && req.user.role === role) {
       return next();
     } else {
