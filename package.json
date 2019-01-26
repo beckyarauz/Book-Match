@@ -7,6 +7,7 @@
     "dev": "nodemon ./bin/www"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.3",
     "connect-ensure-login": "^0.1.1",
@@ -28,6 +29,7 @@
     "passport-slack": "0.0.7",
     "request": "^2.88.0",
     "serve-favicon": "^2.5.0",
+    "socket.io": "^2.2.0",
     "zxcvbn": "^4.4.2"
   },
   "devDependencies": {
