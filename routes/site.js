@@ -6,6 +6,9 @@ const checkGuest = checkRoles('GUEST');
 const checkEditor = checkRoles('EDITOR');
 const checkAdmin = checkRoles('ADMIN');
 
+const bcrypt = require("bcryptjs");
+const bcryptSalt = 10;
+
 const User = require('../models/user');
 
 site.get("/", (req, res, next) => {
@@ -74,7 +77,8 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       userfbID: user.fbID,
       userigID: user.igID,
       userslackID: user.slackID,
-      usertwitterID: user.twitterID});
+      usertwitterID: user.twitterID
+    });
   })
   .catch(err => console.log(err));
 });
@@ -91,11 +95,20 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     fbID: req.body.userfbID,
     igID: req.body.userigID,
     slackID: req.body.userslackID,
-    twitterID: req.body.usertwitterID
+    twitterID: req.body.usertwitterID,
+    password: req.body.newpass
   };
-  console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
+  //console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
   User.findOne({username:updatedUser.username})
   .then(user => {
+    console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
+    if (updatedUser.password === "") {updatedUser.password = user.password;}
+    else {
+      let salt = bcrypt.genSaltSync(bcryptSalt);
+      updatedUser.password = bcrypt.hashSync(updatedUser.password, salt);
+      console.log('Update password. New hash: '+updatedUser.password);
+    }
+    
     user.set({
       firstName: updatedUser.firstname,
       lastName: updatedUser.lastname,
@@ -106,9 +119,16 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
       fbID: updatedUser.fbID,
       igID: updatedUser.igID,
       slackID: updatedUser.slackID,
-      twitterID: updatedUser.twitterID
-    })})
-    .catch(err => console.log(err));
+      twitterID: updatedUser.twitterID,
+      password: updatedUser.password
+    });
+    user.save().then(user => {
+      //console.log(user);
+      res.redirect('/profile-setup');
+    })
+    .catch(err => {console.log(err)});
+  })
+  .catch(err => console.log(err));
 
 });
 
