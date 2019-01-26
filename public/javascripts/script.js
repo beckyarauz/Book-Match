@@ -1,7 +1,20 @@
 
 document.addEventListener('DOMContentLoaded', () => {
-  var resize;
   console.log('IronGenerator JS imported successfully!');
+
+  //book icons event handlers
+  // $( '.star-book' ).click(function() {
+  //   alert( "Handler for .click() called." );
+  // });
+
+  $('.star-book').click(function(e) {
+    // e.preventDefault();
+    $("#book-input").val('true');
+    $("#testForm").submit();
+  });
+  //book icons event handlers end
+  
+  var resize;
   $('#my-image').toggle();
   function readURL(input) {
     
@@ -61,4 +74,9 @@ document.addEventListener('DOMContentLoaded', () => {
     readURL(this);
   });
 
+
+
+  
+
 }, false);
+

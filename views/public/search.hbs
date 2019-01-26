@@ -1,22 +1,26 @@
-
-
-
-
-
-<div class="container book-container" >
-    <h1>Search</h1>
-    <form action="/search" method="GET">
-    <input name="book" type="text" class="form-control"  placeholder="Enter book">
-    <button type="submit"> Submit</button>
-    </form>
-
-{{#each items}}
-    <div class="card" style="width: 10rem;">
-  <img class="card-img-top" src={{this.imageLinks.smallThumbnail}} alt="Card image cap">
-  <div class="card-body">
-    <p class="card-text">{{this.title}}</p>
-    <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+<div class="container book-container flex flex-column">
+  <h1>Search</h1>
+  <form action="/search" method="GET">
+    <input name="book" type="text" class="form-control" placeholder="Enter book" id="book-search">
+    <button class="btn" type="submit"> Submit</button>
+  </form>
+  <div class="container flex wrap">
+    {{#each items}}
+    <div class="card card-book" style="width: 10rem;">
+      <img class="card-img-top" src={{this.imageLinks.thumbnail}} alt="Card image cap">
+      <div class="card-body card-body-book">
+        <div class="card-book-text-container">
+          <h4 class="card-text card-book-text">{{this.title}}</h4>
+          <h6 class="card-text card-book-text">{{this.subtitle}}</h6>
+        </div>
+        <form action="/search" method="POST" id="testForm">
+        <input type="text" name="starred" class="hidden" id="book-input">
+          <div class="book-icons"> <i class="fas fa-star star-book"></i></i><i class="fas fa-plus" id="add-book"></i></div>
+        </form>
+        
+      </div>
+    </div>
+    {{/each}}
   </div>
-</div>
-{{/each}}
+
 </div>
