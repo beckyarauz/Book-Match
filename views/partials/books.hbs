@@ -1,6 +1,8 @@
  {{#each info}}
     <div class="card card-book" style="width: 10rem;" >
-      <img class="card-img-top" src={{this.volumeInfo.imageLinks.thumbnail}} alt="Card image cap">
+      <a href="/book/{{this.id}}">
+        <img class="card-img-top" src={{this.volumeInfo.imageLinks.thumbnail}} alt="Card image cap">
+      </a>
       <div class="card-body card-body-book">
         <div class="card-book-text-container">
           <h4 class="card-text card-book-text">{{this.volumeInfo.title}}</h4>
