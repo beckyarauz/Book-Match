@@ -22,26 +22,27 @@ site.get("/home", (req, res, next) => {
   res.render("home");
 });
 
+
 // //without params: render profile page for logged in user
 site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  
-  let user,
-  username,
-    firstname,
-    lastname,
-    userpicture,
-    usercountry,
-    usercity,
-    userfbID,
-    userigID,
-    userslackID,
-    usertwitterID,
-    isProfileOwner,
-    bookList,
-    bookArr = [];
+  let username,
+  firstname,
+  lastname,
+  userpicture,
+  usercountry,
+  usercity,
+  userfbID,
+  userigID,
+  userslackID,
+  usertwitterID,
+  isProfileOwner,
+  bookList,
+  bookArr = [];
 
 
   const getUser = async () => {
+    let user;
+
     user = await User.findOne({
         username: req.user.username
       });
@@ -74,7 +75,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   }
  
   const getAllInfo = async () => {
-    await getUser();
+    await getUser(req);
     res.render('profile',{
       username, 
       books: bookArr,firstname,
