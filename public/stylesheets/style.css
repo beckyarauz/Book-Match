@@ -160,6 +160,12 @@ button.bg-book-dark:focus {
 .title #profile-name {
   color: var(--text-color) !important; }
 
+#favorite-books {
+  width: 50vw; }
+
+#fav-books {
+  justify-content: space-evenly; }
+
 #profilePic img {
   border-radius: 50%;
   max-width: 100%;
