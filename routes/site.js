@@ -245,6 +245,27 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 });
 
 
+site.get('/book/:bookID'/*,ensureLogin.ensureLoggedIn('/login')*/, (req,res,next) => {
+  //const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
+  console.log(req.params.bookID);
+  const url = `https://www.googleapis.com/books/v1/volumes/${req.params.bookID}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+  let items;
+  request(url, function (error, response, body) {
+    if (!error && response.statusCode == 200) {
+      let info = JSON.parse(body);
+      //console.log(info)
+      //items = info.items.map(item => item);
+      //console.log(items);
+      //res.send(info);
+      res.render('./public/book-detail',{book:info})
+      return;
+    } else {
+    res.send("Error!");
+    }
+  })
+})
+
+
 function checkRoles(role) {
   return function (req, res, next) {
     if (req.isAuthenticated() && req.user.role === role) {
