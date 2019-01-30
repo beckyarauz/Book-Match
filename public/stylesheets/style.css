@@ -1,5 +1,6 @@
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  min-height: 90vh;
   --main-bg-color: #7ca4b0;
   --title-color: #826774;
   --text-color: #c7cbcf;
@@ -14,6 +15,12 @@ h1, h2, h3 {
 
 a {
   color: #00B7FF; }
+
+.header-filter::before {
+  background: rgba(0, 0, 0, 0.2) !important; }
+
+.main-raised {
+  margin-top: -50vh !important; }
 
 .flex {
   display: flex;
@@ -54,6 +61,9 @@ a {
 .btn-book:not(:disabled):not(.disabled):active:focus, .btn-book:not(:disabled):not(.disabled).active:focus,
 .show > .btn-book.dropdown-toggle:focus {
   box-shadow: 0 0 0 0.2rem rgba(38, 143, 255, 0.5); }
+
+.navbar {
+  color: white; }
 
 .container-nav {
   padding: 0; }
@@ -216,6 +226,12 @@ button.bg-book-dark:focus {
   position: absolute;
   bottom: 10px;
   right: 40%; }
+
+.book-detail {
+  margin-top: 20vh; }
+
+.book-detail .card-body {
+  margin-bottom: 15px; }
 
 .bottom {
   display: flex;

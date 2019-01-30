@@ -5,6 +5,7 @@
 
 body {
   font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  min-height: 90vh;
   --main-bg-color: #7ca4b0;
   --title-color: #826774;
   --text-color: #c7cbcf;
@@ -22,6 +23,19 @@ h1,h2,h3{
 
 a {
   color: #00B7FF;
+}
+
+// .profile-page .page-header {
+//   height: 50vh !important;
+//   background-position: top center;
+// }
+
+.header-filter::before {
+  background: rgba(0, 0, 0, 0.2) !important;
+}
+
+.main-raised{
+  margin-top:-50vh !important;
 }
 
 .flex{
@@ -74,6 +88,9 @@ a {
 }
 //navbar
 
+.navbar{
+  color:white;
+}
 
 .container-nav{
   padding: 0;
@@ -199,9 +216,7 @@ margin:20px;
   justify-content: center;
   align-items: center;
 }
-// .btn-fb{
-//   background-color:white;
-// }
+
 .title #profile-name {
   color:var(--text-color)!important;
 }
@@ -209,7 +224,6 @@ margin:20px;
   width:50vw;
 }
 #fav-books{
-  // width:50%;
   justify-content: space-evenly;
 }
 
@@ -279,6 +293,17 @@ margin:20px;
   right:50% - 10;
 }
 //books-end
+
+//book-detail
+.book-detail{
+  margin-top: 20vh;
+}
+
+.book-detail .card-body{
+  margin-bottom: 15px;
+}
+
+//
 
 // profile card
 

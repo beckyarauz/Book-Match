@@ -1,13 +1,10 @@
-<div class="card" style="width: 90%;">
+<div class="container book-detail flex">
+  <div class="card" style="width: 90%;">
   <div class="card-body">
     <h4 class="card-title">{{book.volumeInfo.title}}</h4>
     <h6 class="card-subtitle mb-2 text-muted">{{book.volumeInfo.authors}}</h6>
     <p class="card-text">{{book.volumeInfo.description}}.</p>
-    {{!-- <a href="#0" class="card-link">Card link</a>
-    <a href="#0" class="card-link">Another link</a> --}}
   </div>
-  <form action="/search" method="GET" id="testForm">
-        <input type="text" name="starred" class="hidden" id="book-input"></input>
-          <div class="book-icons" id={{book.id}}> <i class="fas fa-star star-book"></i></i><i class="fas fa-plus" id="add-book"></i></div>
-  </form>
 </div>
+</div>
+
