@@ -226,7 +226,6 @@ site.get('/search', (req, res, next) => {
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
   if (action.starred) {
-    console.log('YEAH');
     BookList.findOne({
         'bookId': action.id
       })
