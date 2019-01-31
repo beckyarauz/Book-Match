@@ -567,3 +567,18 @@ margin:20px;
   margin-bottom: 17px;
 }
 
+
+.star-book:hover{
+  color:gold;
+  cursor: pointer;
+}
+
+.add-book:hover{
+  color:greenyellow;
+  cursor: pointer;
+}
+
+.clicked{
+  color: var(--btn-text-color);
+}
+

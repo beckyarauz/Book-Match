@@ -458,4 +458,15 @@ button.bg-book-dark:focus {
   padding: 0 20px;
   margin-bottom: 17px; }
 
+.star-book:hover {
+  color: gold;
+  cursor: pointer; }
+
+.add-book:hover {
+  color: greenyellow;
+  cursor: pointer; }
+
+.clicked {
+  color: var(--btn-text-color); }
+
 /*# sourceMappingURL=style.css.map */
