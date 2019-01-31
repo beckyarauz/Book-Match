@@ -1,17 +1,33 @@
 
 document.addEventListener('DOMContentLoaded', () => {
+  $('[data-toggle="tooltip"]').tooltip(); 
+
   console.log('IronGenerator JS imported successfully!');
 
   $('.star-book').click(function(e) {
-    console.log($(this).parent().attr('id'));
+    // console.log($(this).parent().attr('id'));
+    
     const bookId = $(this).parent().attr('id');
+    $(this).addClass('clicked');
     axios.post('/search' , { action: {
       starred:true,
       book: bookId
     } 
     });
   });
- 
+
+  $('.add-book').click(function(e) {
+    // console.log($(this).parent().attr('id'));
+
+    const bookId = $(this).parent().attr('id');
+    $(this).addClass('clicked');
+    axios.post('/search' , { action: {
+      added: true,
+      book: bookId
+    } 
+    });
+  });
+
   //book icons event handlers end
   
   var resize;
@@ -79,4 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   
 
 }, false);
+
+
+
 

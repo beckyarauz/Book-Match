@@ -10,9 +10,9 @@
         </div>
         <form action="/search" method="GET" id="testForm">
         <input type="text" name="starred" class="hidden" id="book-input">
-          <div class="book-icons" id={{this.id}}> <i class="fas fa-star star-book"></i></i><i class="fas fa-plus" id="add-book"></i></div>
+          <div class="book-icons" id={{this.id}}> <i class="fas fa-star star-book" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i><i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books" ></i></div>
         </form>
-        
+      
       </div>
     </div>
     {{/each}}
