@@ -16,9 +16,9 @@
             <div class="name">
               <h3 class="title">{{firstname}} {{lastname}}</h3>
               <h6>{{username}}</h6>
-              <a href="#pablo" class="btn btn-just-icon btn-link btn-dribbble"><i class="fab fa-dribbble"></i></a>
-              <a href="#pablo" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
-              <a href="#pablo" class="btn btn-just-icon btn-link btn-pinterest"><i class="fab fa-pinterest"></i></a>
+              <a href="#" class="btn btn-just-icon btn-link btn-dribbble"><i class="fab fa-dribbble"></i></a>
+              <a href="#" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
+              <a href="#" class="btn btn-just-icon btn-link btn-pinterest"><i class="fab fa-pinterest"></i></a>
             </div>
           </div>
         </div>
@@ -36,7 +36,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#works" role="tab" data-toggle="tab">
+                <a class="nav-link" href="#books" role="tab" data-toggle="tab">
                   <i class="material-icons">palette</i> Read Books
                 </a>
               </li>
@@ -72,24 +72,22 @@
             </div>
           </div>
         </div>
-        <div class="tab-pane text-center gallery" id="works">
-          <div class="row">
-            <div class="col-md-3 ml-auto">
-              <img src="/assets/img/examples/olu-eletu.jpg" class="rounded">
-              <img src="/assets/img/examples/clem-onojeghuo.jpg" class="rounded">
-              <img src="/assets/img/examples/cynthia-del-rio.jpg" class="rounded">
+        <div class="tab-pane text-center gallery book-tab" id="books">
+          <div class="row wrap my-books" id="read-books">
+             {{#if books}}
+            {{#each books}}
+            <div>
+              <img src={{this.imageLinks.thumbnail}} alt="image" class="rounded">
             </div>
-            <div class="col-md-3 mr-auto">
-              <img src="/assets/img/examples/mariya-georgieva.jpg" class="rounded">
-              <img src="/assets/img/examples/clem-onojegaw.jpg" class="rounded">
-            </div>
+            {{/each}}
+            {{/if}}
           </div>
         </div>
-        <div class="tab-pane text-center gallery" id="favorite-books">
-          <div class="row wrap" id="fav-books">
-            {{#if books}}
-            {{#each books}}
-            <div class="fav-book">
+        <div class="tab-pane text-center gallery book-tab" id="favorite-books">
+          <div class="row wrap my-books" id="fav-books">
+            {{#if favbooks}}
+            {{#each favbooks}}
+            <div>
               <img src={{this.imageLinks.thumbnail}} alt="image" class="rounded">
             </div>
             {{/each}}

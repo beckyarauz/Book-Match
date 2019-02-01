@@ -18,6 +18,10 @@ const userSchema = new Schema({
   igID: String,
   slackID: String,
   twitterID: String,
+  starredBookLimit: {
+    type: Number,
+    default : 5
+  },
   role: {
     type: String,
     enum : ['GUEST', 'ADMIN'],
