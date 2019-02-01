@@ -16,6 +16,12 @@ h1, h2, h3 {
 a {
   color: #00B7FF; }
 
+.page-header {
+  display: block; }
+
+#title-container {
+  margin-top: 20vh; }
+
 .header-filter::before {
   background: rgba(0, 0, 0, 0.2) !important; }
 

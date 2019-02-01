@@ -30,6 +30,14 @@ a {
 //   background-position: top center;
 // }
 
+.page-header {
+  display:block;
+}
+
+#title-container{
+  margin-top: 20vh;
+}
+
 .header-filter::before {
   background: rgba(0, 0, 0, 0.2) !important;
 }
