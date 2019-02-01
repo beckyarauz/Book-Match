@@ -72,24 +72,22 @@
             </div>
           </div>
         </div>
-        <div class="tab-pane text-center gallery" id="books">
-          <div class="row">
-            <div class="col-md-3 ml-auto">
-              <img src="/assets/img/examples/olu-eletu.jpg" class="rounded">
-              <img src="/assets/img/examples/clem-onojeghuo.jpg" class="rounded">
-              <img src="/assets/img/examples/cynthia-del-rio.jpg" class="rounded">
+        <div class="tab-pane text-center gallery book-tab" id="books">
+          <div class="row wrap my-books" id="read-books">
+             {{#if books}}
+            {{#each books}}
+            <div>
+              <img src={{this.imageLinks.thumbnail}} alt="image" class="rounded">
             </div>
-            <div class="col-md-3 mr-auto">
-              <img src="/assets/img/examples/mariya-georgieva.jpg" class="rounded">
-              <img src="/assets/img/examples/clem-onojegaw.jpg" class="rounded">
-            </div>
+            {{/each}}
+            {{/if}}
           </div>
         </div>
-        <div class="tab-pane text-center gallery" id="favorite-books">
-          <div class="row wrap" id="fav-books">
-            {{#if books}}
-            {{#each books}}
-            <div class="fav-book">
+        <div class="tab-pane text-center gallery book-tab" id="favorite-books">
+          <div class="row wrap my-books" id="fav-books">
+            {{#if favbooks}}
+            {{#each favbooks}}
+            <div>
               <img src={{this.imageLinks.thumbnail}} alt="image" class="rounded">
             </div>
             {{/each}}

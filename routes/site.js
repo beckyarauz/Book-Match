@@ -22,30 +22,31 @@ site.get("/home", (req, res, next) => {
   res.render("home");
 });
 
-
 // //without params: render profile page for logged in user
 site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let username,
-  firstname,
-  lastname,
-  userpicture,
-  usercountry,
-  usercity,
-  userfbID,
-  userigID,
-  userslackID,
-  usertwitterID,
-  isProfileOwner,
-  bookList,
-  bookArr = [];
+    firstname,
+    lastname,
+    userpicture,
+    usercountry,
+    usercity,
+    userfbID,
+    userigID,
+    userslackID,
+    usertwitterID,
+    isProfileOwner,
+    bookList,
+    bookArr = [];
+    favBookArr = [];
 
 
   const getUser = async () => {
     let user;
 
     user = await User.findOne({
-        username: req.user.username
-      });
+      username: req.user.username
+    });
+
     username = user.username;
     firstname = user.firstName;
     lastname = user.lastName;
@@ -59,26 +60,29 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     isProfileOwner = true;
 
     bookList = await BookList.find({
-            userId: user._id
+      userId: user._id,
     });
-    for(book of bookList){
-      // console.log('mybookList',bookList);
-      // console.log('mybook',book);
-      let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
-      // console.log(url);
-      const response = await fetch(url);
-      const json = await response.json();
 
-      bookArr.push(json.volumeInfo);
-      // console.log('bookArr', bookArr);
+    for (book of bookList) {
+        let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+        const response = await fetch(url);
+        const json = await response.json();
+
+        bookArr.push(json.volumeInfo);
+
+      if (book.starred) {
+        favBookArr.push(json.volumeInfo);
+      } 
     }
   }
- 
+
   const getAllInfo = async () => {
     await getUser(req);
-    res.render('profile',{
-      username, 
-      books: bookArr,firstname,
+    res.render('profile', {
+      username,
+      favbooks: favBookArr,
+      books: bookArr,
+      firstname,
       lastname,
       userpicture,
       usercountry,
@@ -88,7 +92,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       userslackID,
       usertwitterID,
       isProfileOwner,
-      bookList,});
+    });
   }
 
   getAllInfo();
@@ -208,6 +212,7 @@ site.get('/search', (req, res, next) => {
     const list = req.query.book.split(' ').join('+');
     const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
     let items;
+
     request(url, function (error, response, body) {
       if (!error && response.statusCode == 200) {
         let info = JSON.parse(body);
@@ -225,9 +230,11 @@ site.get('/search', (req, res, next) => {
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-  if (action.starred) {
+
+  if (action.starred && req.user.starredBookLimit < 5 && req.user.starredBookLimit > 0) {
     BookList.findOne({
-        'bookId': action.id
+        'userId': req.user._id,
+        'bookId': action.book
       })
       .then(data => {
         if (data === null) {
@@ -236,15 +243,57 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             })
             .then(user => {
               createBookList(user._id, action.book, action.starred);
+              user.set({
+                starredBookLimit: --req.user.starredBookLimit
+              })
+              user.save()
+              .then( user => console.log(user.starredBookLimit))
+              .catch(e => console.log(e));
+              
             })
+        } else if(!data.starred){
+          //UPDATE INFO ON BOOK STARRED
+          data.set({ 
+            starred: true 
+          })
+          data.save()
+          .then(book =>{
+            console.log('Book already on DB, updated status');
+            console.log('Book:', book);
+          }
+          )
+          .catch(e => console.log(e));
+        } else if(req.user.starredBookLimit === 0){
+          console.log('You reached the Favorite book Limit');
+        } else {
+          console.log('book already added and starred');
         }
       })
       .catch(e => console.log(e));
+  } else if(action.added) {
+    console.log('you added a book!');
+    BookList.findOne({
+      'userId': req.user._id,
+      'bookId': action.book
+    })
+    .then(book => {
+      if (book === null) {
+        User.findOne({
+            username: req.user.username
+          })
+          .then(user => {
+            createBookList(user._id, action.book, false);
+          })
+      } else{
+        console.log('Book is already on DB');
+      }
+    })
+    .catch(e => console.log(e));
   }
 });
 
 
-site.get('/book/:bookID'/*,ensureLogin.ensureLoggedIn('/login')*/, (req,res,next) => {
+site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, next) => {
   //const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
   console.log(req.params.bookID);
   const url = `https://www.googleapis.com/books/v1/volumes/${req.params.bookID}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
@@ -256,10 +305,12 @@ site.get('/book/:bookID'/*,ensureLogin.ensureLoggedIn('/login')*/, (req,res,next
       //items = info.items.map(item => item);
       //console.log(items);
       //res.send(info);
-      res.render('./public/book-detail',{book:info})
+      res.render('./public/book-detail', {
+        book: info
+      })
       return;
     } else {
-    res.send("Error!");
+      res.send("Error!");
     }
   })
 })
