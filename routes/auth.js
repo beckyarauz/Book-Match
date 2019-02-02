@@ -46,7 +46,7 @@ router.get("/logout", (req, res, next) => {
   });
 });
 
-router.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
+router.post("/signup"/*, recaptcha.middleware.verify*/, (req, res, next) => {
   const username = req.body.username;
   const password = req.body.password;
   const salt = bcrypt.genSaltSync(bcryptSalt);
@@ -79,7 +79,7 @@ router.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
         return;
       }
 
-      if (!req.recaptcha.error) {
+      //if (!req.recaptcha.error) {
         const salt = bcrypt.genSaltSync(bcryptSalt);
         const hashPass = bcrypt.hashSync(password, salt);
 
@@ -95,13 +95,13 @@ router.post("/signup", recaptcha.middleware.verify, (req, res, next) => {
             res.redirect('/profile-setup');
           })
           }).catch(error => console.log(error))
-      } else {
-        res.render("auth/signup", {
-          message: 'Please select captcha',
-        });
-        console.log(req.recaptcha.error);
-        return;
-      }
+      // } else {
+      //   res.render("auth/signup", {
+      //     message: 'Please select captcha',
+      //   });
+      //   // console.log(req.recaptcha.error);
+      //   return;
+      // }
       })
     .catch(error => {
       next(error);
