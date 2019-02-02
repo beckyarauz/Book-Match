@@ -375,5 +375,53 @@ function createBookList(userId, bookId, starred) {
     .catch(e => console.log(e));
 }
 
+site.get('/matches',ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
+  //console.log("matches!");
+  //Query DB for list of own read books
+  BookList.find({userId:req.user._id})
+  .then((bookList) => {
+    //console.log(bookList);
+    bookArr = bookList.map((el) => el.bookId)
+    //res.send(bookList); 
+    //res.send(bookArr);
+    console.log("Own book list: " +bookArr);
+    //Query DB for list of users with a count their respective number of matching books
+    BookList.aggregate([
+      {
+         $match: { //match books with own book list
+          bookId: {$in: bookArr}
+          //,userId: {$ne: req.user._id} //exclude own user --> disable for testing
+        }
+      },
+      {
+        $group: { //aggregate matching books on each user
+          _id: '$userId',
+          matchingBooks: {$sum:1}
+        }
+      },
+      {
+        $lookup: { //lookup user details from "users" collection
+          from:'users',
+          localField:'_id',
+          foreignField:'_id',
+          as:'user'
+        }
+      },
+      {$unwind:"$user"}
+    ]).sort({matchingBooks:-1}) //sort by number of matching books, descending
+    .then((matches) => {
+      //res.send(matches)
+      res.render('matches-test',{matches:matches});
+    })
+    .catch(err => {
+      console.log(err);
+      res.send(err);
+    })
+  })
+  .catch(err => {
+    console.log(err);
+    res.send(err);
+  });
+});
 
 module.exports = site;
