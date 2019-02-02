@@ -1,12 +1,19 @@
 <div id="matches-container" class="container">
     <h1>Matches</h1>
-    <form action="/matches" method="POST">
+    <form action="/matches" method="GET">
         <input name="username" type="text" class="form-control user-search" placeholder="Enter a username" >
-        <button class="btn" type="submit" id="user-search-btn"> Submit</button>
+        <button class="btn" type="submit" id="user-search-btn">Submit</button>
     </form>
-    {{#if userInfo}}
-    <div>
-        <h3>{{> users info=userInfo}}</h3>
-    </div>
+    {{#if matches}}
+        {{#each matches}}
+            {{> users info=this.userInfo}}
+        {{/each}}
+        {{else}}
+        <h1>No matches</h1>
     {{/if}}
+
+    {{#if userInfo}}
+        {{> users info=userInfo}}
+    {{/if}}
+
 </div>
