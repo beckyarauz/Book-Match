@@ -88,6 +88,9 @@ button.bg-book-dark:focus {
 .card-home {
   background-color: var(--title-color) !important; }
 
+#matches-container {
+  margin-top: 20vh; }
+
 #form-auth {
   display: flex;
   justify-content: center;

@@ -4,6 +4,10 @@ const Schema   = mongoose.Schema;
 const userSchema = new Schema({
   username: String,
   password: String,
+  gender:{
+    type: Object,
+    default : {'N': true, 'F': false, 'M': false}
+  },
   firstName:String,
   lastName: String,
   picture: String,

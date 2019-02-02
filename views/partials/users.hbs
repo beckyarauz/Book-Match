@@ -1,0 +1,47 @@
+<div class="container-profile">
+
+<div class="container">
+	<div class="row card-row">
+		<div class="col-lg-3 col-sm-3">
+            <div class="card hovercard">
+                <div class="cardheader">
+
+                </div>
+                <div class="avatar">
+                    {{#if info.picture}}
+                    <img alt="" src={{info.picture}}>
+                    {{else}}
+                    {{#if info.gender.F}}
+                        <img alt="" src='/images/woman-avatar.png'>
+                    {{/if}}
+                    {{#if info.gender.M}}
+                        <img alt="" src='/images/man-avatar.png'>
+                    {{/if}}
+                    {{#if info.gender.N}}
+                        <img alt="" src='/images/neutral-avatar.png'>
+                    {{/if}}
+                    {{/if}}
+                </div>
+                <div class="info">
+                    <div class="username">{{info.username}}</div>
+                </div>
+                <div class="bottom">
+                    <a class="btn btn-twitter btn-twitter btn-sm icon" href="https://twitter.com/beckyarauz">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a class="btn btn-fb btn-sm icon" rel="publisher"
+                       href="https://www.facebook.com/rebeca.cabanas">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a class="btn btn-insta btn-sm icon" rel="publisher" href="https://www.instagram.com/beckyarauz">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                </div>
+            </div>
+
+        </div>
+
+	</div>
+</div>
+</div>
+

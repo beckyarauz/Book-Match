@@ -27,6 +27,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let username,
     firstname,
     lastname,
+    gender,
     userpicture,
     usercountry,
     usercity,
@@ -50,6 +51,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     username = user.username;
     firstname = user.firstName;
     lastname = user.lastName;
+    gender = user.gender;
     userpicture = user.picture;
     usercountry = user.country;
     usercity = user.city;
@@ -80,6 +82,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     await getUser(req);
     res.render('profile', {
       username,
+      gender,
       favbooks: favBookArr,
       books: bookArr,
       firstname,
@@ -160,7 +163,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     igID: req.body.userigID,
     slackID: req.body.userslackID,
     twitterID: req.body.usertwitterID,
-    password: req.body.newpass
+    password: req.body.newpass,
+    gender: req.body.gender
   };
   //console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
   User.findOne({
@@ -175,7 +179,21 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         updatedUser.password = bcrypt.hashSync(updatedUser.password, salt);
       }
 
-      user.set({
+      let genderResult = {'N':false,'F':false,'M':false};
+
+      switch(updatedUser.gender){
+        case 'F': 
+          genderResult['F'] = true;
+          break;
+        case 'M': 
+          genderResult['M'] = true;
+          break;
+        case 'N': 
+          genderResult['N'] = true;
+          break;
+      }
+
+      user.set({  
         firstName: updatedUser.firstname,
         lastName: updatedUser.lastname,
         picture: updatedUser.userpicture,
@@ -186,7 +204,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         igID: updatedUser.igID,
         slackID: updatedUser.slackID,
         twitterID: updatedUser.twitterID,
-        password: updatedUser.password
+        password: updatedUser.password,
+        gender:genderResult
       });
       user.save().then(user => {
           //console.log(user);
@@ -316,6 +335,23 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
   })
 })
 
+site.get('/matches', (req, res, next) => {
+  res.render('matches');
+})
+site.post('/matches', (req, res, next) => {
+  User.findOne({'username': req.body.username})
+  .then(user  =>{
+    const userInfo = {
+      username: req.body.username,
+      picture: user.picture,
+      gender: user.gender
+    }
+
+    res.render('matches',{userInfo});
+  })
+  .catch(e => console.log(e));
+
+})
 
 function checkRoles(role) {
   return function (req, res, next) {
