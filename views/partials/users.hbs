@@ -3,29 +3,30 @@
 		<div class="col-lg-3 col-sm-3">
             <div class="card hovercard">
                 <div class="cardheader">
-
                 </div>
                 <div class="avatar">
-                    {{#if info.picture}}
-                    <img alt="" src={{info.picture}}>
+                   {{!-- Images cannot work right now b/c code does not match database model 
+                    {{#if this.user.userpicture}}
+                        <img alt="" src={{this.user.userpicture}}>
                     {{else}}
-                    {{#if info.gender.F}}
-                        <img alt="" src='/images/woman-avatar.png'>
-                    {{/if}}
-                    {{#if info.gender.M}}
-                        <img alt="" src='/images/man-avatar.png'>
-                    {{/if}}
-                    {{#if info.gender.N}}
-                        <img alt="" src='/images/neutral-avatar.png'>
-                    {{/if}}
-                    {{/if}}
+                        {{#if this.user.gender.F}}
+                            <img alt="" src='/images/woman-avatar.png'>
+                        {{/if}}
+                         {{#if this.user.gender.M}}
+                            <img alt="" src='/images/man-avatar.png'>
+                        {{/if}}
+                        {{#if this.user.gender.N}}
+                            <img alt="" src='/images/neutral-avatar.png'>
+                        {{/if}}
+                    {{/if}} --}}
+                     <img alt="" src='/images/neutral-avatar.png'>
                 </div>
                 <div class="info">
-                    <div class="username">{{info.username}}</div>
+                    <div class="username">{{this.user.username}}</div>
                 </div>
                 <div class="bottom">
                     <a class="btn btn-sm" href="#">
-                        Books Matched: 4
+                        Matching books: {{this.matchingBooks}}
                     </a>
                 </div>
             </div>
@@ -34,4 +35,3 @@
 
 	</div>
 </div>
-
