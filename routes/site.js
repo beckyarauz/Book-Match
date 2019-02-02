@@ -335,23 +335,23 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
   })
 })
 
-site.get('/matches', (req, res, next) => {
-  res.render('matches');
-})
-site.post('/matches', (req, res, next) => {
-  User.findOne({'username': req.body.username})
-  .then(user  =>{
-    const userInfo = {
-      username: req.body.username,
-      picture: user.picture,
-      gender: user.gender
-    }
+// site.get('/matches', (req, res, next) => {
+//   res.render('matches');
+// })
+// site.post('/matches', (req, res, next) => {
+//   User.findOne({'username': req.body.username})
+//   .then(user  =>{
+//     const userInfo = {
+//       username: req.body.username,
+//       picture: user.picture,
+//       gender: user.gender
+//     }
 
-    res.render('matches',{userInfo});
-  })
-  .catch(e => console.log(e));
+//     res.render('matches',{userInfo});
+//   })
+//   .catch(e => console.log(e));
 
-})
+// })
 
 function checkRoles(role) {
   return function (req, res, next) {
