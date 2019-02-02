@@ -4,16 +4,12 @@
         <input name="username" type="text" class="form-control user-search" placeholder="Enter a username" >
         <button class="btn" type="submit" id="user-search-btn">Submit</button>
     </form>
+
     {{#if matches}}
         {{#each matches}}
-            {{> users info=this.userInfo}}
+            {{> users this}}
         {{/each}}
-        {{else}}
-        <h1>No matches</h1>
+    {{else}}
+        <h3>Sorry, no matches, yet! Add some more books and check back later!</h3>
     {{/if}}
-
-    {{#if userInfo}}
-        {{> users info=userInfo}}
-    {{/if}}
-
 </div>
