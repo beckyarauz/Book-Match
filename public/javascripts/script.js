@@ -4,7 +4,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   console.log('IronGenerator JS imported successfully!');
   
-  $('.star-book').click(function(e) {    
+  $('.star-book').click(function(e) {   
+    console.log('star book clicked!'); 
     const bookId = $(this).parent().attr('id');
     $(this).addClass('clicked');
     axios.post('/search' , { action: {

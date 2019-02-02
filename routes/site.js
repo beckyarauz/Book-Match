@@ -230,8 +230,9 @@ site.get('/search', (req, res, next) => {
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-
-  if (action.starred && req.user.starredBookLimit < 5 && req.user.starredBookLimit > 0) {
+  
+  if (action.starred && req.user.starredBookLimit <= 5 && req.user.starredBookLimit > 0) {
+    console.log('Starred!');
     BookList.findOne({
         'userId': req.user._id,
         'bookId': action.book
