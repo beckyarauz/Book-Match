@@ -1,11 +1,8 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   $('[data-toggle="tooltip"]').tooltip(); 
-
-  console.log('IronGenerator JS imported successfully!');
   
   $('.star-book').click(function(e) {   
-    console.log('star book clicked!'); 
     const bookId = $(this).parent().attr('id');
     $(this).addClass('clicked');
     axios.post('/search' , { action: {
