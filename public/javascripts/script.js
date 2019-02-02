@@ -22,6 +22,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  // $('#user-search-btn').click(function(e) {
+  //   console.log('CLIIIICKED!');
+  //   const username = $('.user-search').val();
+  //   console.log(username);
+  //   axios.post('/matches' , { action: {
+  //     userSearch: username,
+  //   } 
+  //   });
+  // });
+
+
+
   //book icons event handlers end
   
   var resize;

@@ -7,11 +7,23 @@
         <div class="col-md-6 ml-auto mr-auto">
           <div class="profile">
             <div class="avatar">
+
               {{#if userpicture}}
-              <img src="{{userpicture}}" alt="Circle Image" class="img-raised rounded-circle img-fluid">
-              {{else}}
-              <img src="/images/man-avatar.png" alt="Circle Image" class="img-raised rounded-circle img-fluid">
+                    <img src="{{userpicture}}" alt="Circle Image" class="img-raised rounded-circle img-fluid">
+                    {{else}}
+
+                    {{#if gender.F}}
+                        <img src="/images/woman-avatar.png" alt="Circle Image" class="img-raised rounded-circle img-fluid">
+                    {{/if}}
+                    {{#if gender.M}}
+                        <img src="/images/man-avatar.png" alt="Circle Image" class="img-raised rounded-circle img-fluid">
+                    {{/if}}
+                    {{#if gender.N}}
+                        <img src="/images/neutral-avatar.png" alt="Circle Image" class="img-raised rounded-circle img-fluid">
+                    {{/if}}
               {{/if}}
+
+
             </div>
             <div class="name">
               <h3 class="title">{{firstname}} {{lastname}}</h3>
