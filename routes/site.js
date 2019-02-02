@@ -335,10 +335,8 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
   })
 })
 
+
 // site.get('/matches', (req, res, next) => {
-//   res.render('matches');
-// })
-// site.post('/matches', (req, res, next) => {
 //   User.findOne({'username': req.body.username})
 //   .then(user  =>{
 //     const userInfo = {
