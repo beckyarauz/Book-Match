@@ -2,34 +2,60 @@
 document.addEventListener('DOMContentLoaded', () => {
   $('[data-toggle="tooltip"]').tooltip(); 
   
-  $('.star-book').click(function(e) {   
-    const bookId = $(this).parent().attr('id');
-    $(this).addClass('clicked');
-    axios.post('/search' , { action: {
-      starred:true,
-      book: bookId
-    } 
-    });
-  });
-
-  $('.add-book').click(function(e) {
-    const bookId = $(this).parent().attr('id');
-    $(this).addClass('clicked');
-    axios.post('/search' , { action: {
-      added: true,
-      book: bookId
-    } 
-    });
-  });
-
-  // $('#user-search-btn').click(function(e) {
-  //   console.log('CLIIIICKED!');
-  //   const username = $('.user-search').val();
-  //   console.log(username);
-  //   axios.post('/matches' , { action: {
-  //     userSearch: username,
+  // function removeFavBook(id,element){
+  //   element.removeClass('clicked');
+  //   axios.post('/search' , { action: {
+  //     star:true,
+  //     starred: false,
+  //     book: id
   //   } 
   //   });
+  // }
+  // function removeBook(id,element){
+  //   element.removeClass('clicked');
+  //   axios.post('/search' , { action: {
+  //     remove:true,
+  //     book: id
+  //   } 
+  //   });
+  // }
+  function addBook(id,element){
+    element.removeClass('clicked');
+    axios.post('/search' , { action: {
+      add:true,
+      book: id
+    } 
+    });
+  }
+  function favBook(id,element){
+    element.toggleClass('clicked');
+    axios.post('/search' , { action: {
+        star:true,
+        book: id
+      } 
+    });
+  }
+
+
+  $('.star-book').click(function(e) {   
+    const bookId = $(this).parent().attr('id');
+    const that = $(this);
+    favBook(bookId,that);
+  });
+  $('.add-book').click(function(e) {   
+    const bookId = $(this).parent().attr('id');
+    const that = $(this);
+    addBook(bookId,that);
+  });
+  // $('.star-book').click(function(e) {   
+  //   const bookId = $(this).parent().attr('id');
+  //   const that = $(this);
+  //   $(this).hasClass('clicked') ? removeFavBook(bookId,that) : addFavBook(bookId,that);
+  // });
+  // $('.add-book').click(function(e) {   
+  //   const bookId = $(this).parent().attr('id');
+  //   const that = $(this);
+  //   $(this).hasClass('clicked') ? removeBook(bookId,that) : addBook(bookId,that);
   // });
 
 

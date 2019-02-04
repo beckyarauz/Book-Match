@@ -236,80 +236,115 @@ site.get('/search', (req, res, next) => {
       if (!error && response.statusCode == 200) {
         let info = JSON.parse(body);
         items = info.items.map(item => item);
-        res.render('search', {
-          items
+        bookIds = items.map( item => {
+          return  item.id
         });
-        return;
+
+        BookList.find({
+          'userId': req.user._id,
+          'bookId': {$in: bookIds}
+        })
+        .then(books => {
+          let starredBooks = books.filter(book =>book.starred);
+          // console.log('starredBooks:',starredBooks);
+
+          let bookInfo = items.map( item => {
+            return {
+              'id': item.id,
+              'image': item.volumeInfo.imageLinks.thumbnail,
+              'title': item.volumeInfo.title,
+              'subtitle': item.volumeInfo.subtitle,
+              'starred': (() => {
+                // for(book of starredBooks){
+                  for(let i = 0; i < starredBooks.length;i++){
+                  // console.log(`comparing ${item.id} and ${book.bookId}`);
+                  if(item.id === starredBooks[i].bookId){
+                    return true;
+                  } 
+                }
+              })()
+            }
+          });
+
+          // console.log('info!:',bookInfo);
+        
+          res.render('search', {
+            bookInfo
+          });
+        })
+        .catch(e => console.log(e.message));
+        
       }
-    })
-  } else {
+    })} else {
     res.render('search');
   }
 });
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-  
-  if (action.starred && req.user.starredBookLimit <= 5 && req.user.starredBookLimit > 0) {
-    console.log('Starred!');
-    BookList.findOne({
-        'userId': req.user._id,
-        'bookId': action.book
-      })
-      .then(data => {
-        if (data === null) {
-          User.findOne({
-              username: req.user.username
-            })
-            .then(user => {
-              createBookList(user._id, action.book, action.starred);
-              user.set({
-                starredBookLimit: --req.user.starredBookLimit
-              })
-              user.save()
-              .then( user => console.log(user.starredBookLimit))
-              .catch(e => console.log(e));
-              
-            })
-        } else if(!data.starred){
-          //UPDATE INFO ON BOOK STARRED
-          data.set({ 
-            starred: true 
-          })
-          data.save()
-          .then(book =>{
-            console.log('Book already on DB, updated status');
-            console.log('Book:', book);
-          }
-          )
-          .catch(e => console.log(e));
-        } else if(req.user.starredBookLimit === 0){
-          console.log('You reached the Favorite book Limit');
-        } else {
-          console.log('book already added and starred');
-        }
-      })
-      .catch(e => console.log(e));
-  } else if(action.added) {
-    console.log('you added a book!');
+
+  if(action.star || action.add){
     BookList.findOne({
       'userId': req.user._id,
       'bookId': action.book
     })
-    .then(book => {
-      if (book === null) {
-        User.findOne({
-            username: req.user.username
+    .then(data => {
+      if (data === null){
+        console.log('There is no book on BookList collection');
+            User.findOne({
+                username: req.user.username
+              })
+              .then(user => {
+                if(action.star){
+                  console.log('you added book to favorites and your collection');
+                  user.set({
+                    starredBookLimit: --req.user.starredBookLimit
+                  });
+                  user.save();
+                  createBookList(user._id, action.book, true);
+                } else if(action.add){
+                  console.log('you added book to your collection');
+                  createBookList(user._id, action.book, false);
+                }
+              })
+              .catch(e => console.log(e));
+      } else  {
+        if(action.add){
+          console.log('Book has already been added');
+          return;
+        } else if(action.star){
+          BookList.findOne({'userId': req.user._id,'bookId': action.book})
+          .then(book =>{
+            if(book.starred){
+              console.log('this book will be removed from your favorites');
+              book.set({starred:false});
+              book.save()
+              .then(book => {
+                console.log(book);
+              }).catch(e=> {console.log(e.message)});
+              User.findOneAndUpdate({'_id': req.user._id},{starredBookLimit:++req.user.starredBookLimit});
+            } else{
+              console.log('this book will be added to your favorites');
+              book.set({starred:true});
+              book.save();
+              User.findOneAndUpdate({'_id': req.user._id},{starredBookLimit:--req.user.starredBookLimit});
+            }
           })
-          .then(user => {
-            createBookList(user._id, action.book, false);
-          })
-      } else{
-        console.log('Book is already on DB');
+        }
       }
     })
-    .catch(e => console.log(e));
+    .catch(e => console.log(e.message))
+  } else if(action.remove){
+    
+    BookList.findOneAndDelete({
+      'userId': req.user._id,
+      'bookId': action.book
+    }).then(book => {
+      console.log('Book has been removed from collection:',book);
+    })
+    .catch(e => console.log(e.message));
   }
+
 });
 
 
@@ -336,21 +371,6 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
 })
 
 
-// site.get('/matches', (req, res, next) => {
-//   User.findOne({'username': req.body.username})
-//   .then(user  =>{
-//     const userInfo = {
-//       username: req.body.username,
-//       picture: user.picture,
-//       gender: user.gender
-//     }
-
-//     res.render('matches',{userInfo});
-//   })
-//   .catch(e => console.log(e));
-
-// })
-
 function checkRoles(role) {
   return function (req, res, next) {
     if (req.isAuthenticated() && req.user.role === role) {
@@ -361,18 +381,16 @@ function checkRoles(role) {
   }
 }
 
-function createBookList(userId, bookId, starred) {
+async function createBookList(userId, bookId,starred) {
   bookList = new BookList({
     userId: userId,
     bookId: bookId,
-    starred: starred
+    starred:starred
   })
 
-  bookList.save()
-    .then(book => {
-      console.log('Book was saved!');
-    })
-    .catch(e => console.log(e));
+  mybook = await bookList.save();
+  console.log('The book was saved!', mybook);
+  return mybook;
 }
 
 site.get('/matches',ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
