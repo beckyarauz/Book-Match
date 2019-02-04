@@ -64,22 +64,25 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     bookList = await BookList.find({
       userId: user._id,
     });
-
+    console.log('bookList from DB:',bookList);
     for (book of bookList) {
-        let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
-        const response = await fetch(url);
-        const json = await response.json();
+      let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+      const response = await fetch(url);
+      const json = await response.json();
 
-        bookArr.push(json.volumeInfo);
+      bookArr.push(json.volumeInfo);
+      
 
       if (book.starred) {
         favBookArr.push(json.volumeInfo);
-      } 
+      }
     }
   }
 
+  
   const getAllInfo = async () => {
     await getUser(req);
+    console.log('bookArr after API call',bookArr);
     res.render('profile', {
       username,
       gender,
@@ -179,21 +182,25 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         updatedUser.password = bcrypt.hashSync(updatedUser.password, salt);
       }
 
-      let genderResult = {'N':false,'F':false,'M':false};
+      let genderResult = {
+        'N': false,
+        'F': false,
+        'M': false
+      };
 
-      switch(updatedUser.gender){
-        case 'F': 
+      switch (updatedUser.gender) {
+        case 'F':
           genderResult['F'] = true;
           break;
-        case 'M': 
+        case 'M':
           genderResult['M'] = true;
           break;
-        case 'N': 
+        case 'N':
           genderResult['N'] = true;
           break;
       }
 
-      user.set({  
+      user.set({
         firstName: updatedUser.firstname,
         lastName: updatedUser.lastname,
         picture: updatedUser.userpicture,
@@ -205,7 +212,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         slackID: updatedUser.slackID,
         twitterID: updatedUser.twitterID,
         password: updatedUser.password,
-        gender:genderResult
+        gender: genderResult
       });
       user.save().then(user => {
           //console.log(user);
@@ -236,46 +243,72 @@ site.get('/search', (req, res, next) => {
       if (!error && response.statusCode == 200) {
         let info = JSON.parse(body);
         items = info.items.map(item => item);
-        bookIds = items.map( item => {
-          return  item.id
+        bookIds = items.map(item => {
+          return item.id
         });
+        let bookInfo;
 
-        BookList.find({
-          'userId': req.user._id,
-          'bookId': {$in: bookIds}
-        })
-        .then(books => {
-          let starredBooks = books.filter(book =>book.starred);
-          // console.log('starredBooks:',starredBooks);
+        if(req.user){
+          BookList.find({
+            'userId': req.user._id,
+            'bookId': {
+              $in: bookIds
+            }
+          })
+          .then(books => {
+            let starredBooks = books.filter(book => book.starred);
+            let booksDB = books;
+            // console.log('ITEMS:',items);
 
-          let bookInfo = items.map( item => {
+            bookInfo = items.map(item => {
+              return {
+                'id': item.id,
+                'image': item.volumeInfo.imageLinks ?  item.volumeInfo.imageLinks.thumbnail : 'images/book_404.png',
+                'title': item.volumeInfo.title,
+                'subtitle': item.volumeInfo.subtitle,
+                'added':(() => {
+                  // for(book of starredBooks){
+                  for (let i = 0; i < booksDB.length; i++) {
+                    // console.log(`comparing ${item.id} and ${book.bookId}`);
+                    if (item.id === booksDB[i].bookId) {
+                      return true;
+                    }
+                  }
+                })(),
+                'starred': (() => {
+                  // for(book of starredBooks){
+                  for (let i = 0; i < starredBooks.length; i++) {
+                    // console.log(`comparing ${item.id} and ${book.bookId}`);
+                    if (item.id === starredBooks[i].bookId) {
+                      return true;
+                    }
+                  }
+                })()
+              }
+            });
+
+            res.render('search', {
+              bookInfo
+            });
+          })
+          .catch(e => console.log(e.message));
+        } else{
+          bookInfo = items.map(item => {
+            console.log(item.volumeInfo.imageLinks);
             return {
               'id': item.id,
-              'image': item.volumeInfo.imageLinks.thumbnail,
+              'image': item.volumeInfo.imageLinks ?  item.volumeInfo.imageLinks.thumbnail : 'images/book_404.png',
               'title': item.volumeInfo.title,
               'subtitle': item.volumeInfo.subtitle,
-              'starred': (() => {
-                // for(book of starredBooks){
-                  for(let i = 0; i < starredBooks.length;i++){
-                  // console.log(`comparing ${item.id} and ${book.bookId}`);
-                  if(item.id === starredBooks[i].bookId){
-                    return true;
-                  } 
-                }
-              })()
             }
           });
-
-          // console.log('info!:',bookInfo);
-        
           res.render('search', {
             bookInfo
           });
-        })
-        .catch(e => console.log(e.message));
-        
+        }
       }
-    })} else {
+    })
+  } else {
     res.render('search');
   }
 });
@@ -283,66 +316,108 @@ site.get('/search', (req, res, next) => {
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
 
-  if(action.star || action.add){
+  if (action.star || action.add) {
     BookList.findOne({
-      'userId': req.user._id,
-      'bookId': action.book
-    })
-    .then(data => {
-      if (data === null){
-        console.log('There is no book on BookList collection');
-            User.findOne({
-                username: req.user.username
-              })
-              .then(user => {
-                if(action.star){
-                  console.log('you added book to favorites and your collection');
-                  user.set({
-                    starredBookLimit: --req.user.starredBookLimit
+        'userId': req.user._id,
+        'bookId': action.book
+      })
+      .then(data => {
+        if (data === null) {
+          console.log('There is no book on BookList collection');
+          if(req.user.starredBookLimit === 0){
+            console.log(`You can't add more books, you reached your limits.`, `Your book limit: ${req.user.starredBookLimit}`);
+          }
+          User.findOne({
+              username: req.user.username
+            })
+            .then(user => {
+              if (action.star && req.user.starredBookLimit > 0) {
+                console.log('you added book to favorites and your collection');
+                user.set({
+                  starredBookLimit: --req.user.starredBookLimit
+                });
+                user.save();
+                createBookList(user._id, action.book, true);
+                User.findOneAndUpdate({
+                    '_id': req.user._id
+                  }, {
+                    starredBookLimit: ++req.user.starredBookLimit
+                  })
+                  .then(user => {
+                    console.log('updated User:', user);
                   });
-                  user.save();
-                  createBookList(user._id, action.book, true);
-                } else if(action.add){
-                  console.log('you added book to your collection');
-                  createBookList(user._id, action.book, false);
+              } else if (action.add) {
+                console.log('you added book to your collection');
+                createBookList(user._id, action.book, false);
+              }
+            })
+            .catch(e => console.log(e));
+        } else {
+          if (action.add) {
+            console.log('Book has already been added');
+            return;
+          } else if (action.star) {
+            BookList.findOne({
+                'userId': req.user._id,
+                'bookId': action.book
+              })
+              .then(book => {
+                if (book.starred) {
+                  console.log('this book will be removed from your favorites');
+                  book.set({
+                    starred: false
+                  });
+                  book.save()
+                    .then(book => {
+                      console.log(book);
+                    }).catch(e => {
+                      console.log(e.message)
+                    });
+                  User.findOneAndUpdate({
+                      '_id': req.user._id
+                    }, {
+                      starredBookLimit: ++req.user.starredBookLimit
+                    })
+                    .then(user => {
+                      console.log('updated User:', user);
+                    });
+                } else if (req.user.starredBookLimit > 0) {
+                  console.log('this book will be added to your favorites');
+                  book.set({
+                    starred: true
+                  });
+                  book.save();
+                  User.findOneAndUpdate({
+                      '_id': req.user._id
+                    }, {
+                      starredBookLimit: --req.user.starredBookLimit
+                    })
+                    .then(user => {
+                      console.log('updated User:', user);
+                    });
+                } else {
+                  console.log(`You can't add more books, you reached your limits.`, `Your book limit: ${req.user.starredBookLimit}`);
                 }
               })
-              .catch(e => console.log(e));
-      } else  {
-        if(action.add){
-          console.log('Book has already been added');
-          return;
-        } else if(action.star){
-          BookList.findOne({'userId': req.user._id,'bookId': action.book})
-          .then(book =>{
-            if(book.starred){
-              console.log('this book will be removed from your favorites');
-              book.set({starred:false});
-              book.save()
-              .then(book => {
-                console.log(book);
-              }).catch(e=> {console.log(e.message)});
-              User.findOneAndUpdate({'_id': req.user._id},{starredBookLimit:++req.user.starredBookLimit});
-            } else{
-              console.log('this book will be added to your favorites');
-              book.set({starred:true});
-              book.save();
-              User.findOneAndUpdate({'_id': req.user._id},{starredBookLimit:--req.user.starredBookLimit});
-            }
-          })
+          }
         }
-      }
-    })
-    .catch(e => console.log(e.message))
-  } else if(action.remove){
-    
+      })
+      .catch(e => console.log(e.message))
+  } else if (action.remove) {
     BookList.findOneAndDelete({
-      'userId': req.user._id,
-      'bookId': action.book
-    }).then(book => {
-      console.log('Book has been removed from collection:',book);
-    })
-    .catch(e => console.log(e.message));
+        'userId': req.user._id,
+        'bookId': action.book
+      }).then(book => {
+        if(book.starred){
+          User.findOneAndUpdate({'_id':req.user._id},{'starredBookLimit':++req.user.starredBookLimit})
+          .then( user => {
+            console.log('removed book and Updated User bookLimit');
+          })
+          .catch(e => console.log(e.message));
+        }
+        console.log('Book has been removed from collection:', book);
+      })
+      .catch(e => console.log(e.message));
   }
 
 });
@@ -381,11 +456,11 @@ function checkRoles(role) {
   }
 }
 
-async function createBookList(userId, bookId,starred) {
+async function createBookList(userId, bookId, starred) {
   bookList = new BookList({
     userId: userId,
     bookId: bookId,
-    starred:starred
+    starred: starred
   })
 
   mybook = await bookList.save();
@@ -393,57 +468,70 @@ async function createBookList(userId, bookId,starred) {
   return mybook;
 }
 
-site.get('/matches',ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
+site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   //console.log("matches!");
   //Query DB for list of own read books
-  BookList.find({userId:req.user._id})
-  .then((bookList) => {
-    //console.log(bookList);
-    bookArr = bookList.map((el) => el.bookId)
-    //res.send(bookList); 
-    //res.send(bookArr);
-    console.log("Own book list: " +bookArr);
-    //Query DB for list of users with a count their respective number of matching books
-    BookList.aggregate([
-      {
-        $match: { 
-          // userId: {$ne: req.user._id} //exclude own user --> disable for testing
-        }
-      },
-      {
-        $group: { //calculate number matching books for each user
-          _id: '$userId',
-          matchingBooks: {$sum: {$cond: [{$in:["$bookId",bookArr]},1,0]}}
-        }
-      },
-      {
-        $lookup: { //lookup user details from "users" collection
-          from:'users',
-          localField:'_id',
-          foreignField:'_id',
-          as:'user'
-        }
-      },
-      {
-        $match: { //only display users that have books from requesting users own book list in their collection
-          // matchingBooks: {$gt: 0}
-        }
-      },
-      {$unwind:"$user"}
-    ]).sort({matchingBooks:-1}) //sort by number of matching books, descending
-    .then((matches) => {
-      // res.send(matches)
-      res.render('matches',{matches:matches});
+  BookList.find({
+      userId: req.user._id
+    })
+    .then((bookList) => {
+      //console.log(bookList);
+      bookArr = bookList.map((el) => el.bookId)
+      //res.send(bookList); 
+      //res.send(bookArr);
+      console.log("Own book list: " + bookArr);
+      //Query DB for list of users with a count their respective number of matching books
+      BookList.aggregate([{
+            $match: {
+              // userId: {$ne: req.user._id} //exclude own user --> disable for testing
+            }
+          },
+          {
+            $group: { //calculate number matching books for each user
+              _id: '$userId',
+              matchingBooks: {
+                $sum: {
+                  $cond: [{
+                    $in: ["$bookId", bookArr]
+                  }, 1, 0]
+                }
+              }
+            }
+          },
+          {
+            $lookup: { //lookup user details from "users" collection
+              from: 'users',
+              localField: '_id',
+              foreignField: '_id',
+              as: 'user'
+            }
+          },
+          {
+            $match: { //only display users that have books from requesting users own book list in their collection
+              // matchingBooks: {$gt: 0}
+            }
+          },
+          {
+            $unwind: "$user"
+          }
+        ]).sort({
+          matchingBooks: -1
+        }) //sort by number of matching books, descending
+        .then((matches) => {
+          // res.send(matches)
+          res.render('matches', {
+            matches: matches
+          });
+        })
+        .catch(err => {
+          console.log(err);
+          res.send(err);
+        })
     })
     .catch(err => {
       console.log(err);
       res.send(err);
-    })
-  })
-  .catch(err => {
-    console.log(err);
-    res.send(err);
-  });
+    });
 });
 
 module.exports = site;

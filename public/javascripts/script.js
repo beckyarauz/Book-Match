@@ -1,24 +1,15 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   $('[data-toggle="tooltip"]').tooltip(); 
-  
-  // function removeFavBook(id,element){
-  //   element.removeClass('clicked');
-  //   axios.post('/search' , { action: {
-  //     star:true,
-  //     starred: false,
-  //     book: id
-  //   } 
-  //   });
-  // }
-  // function removeBook(id,element){
-  //   element.removeClass('clicked');
-  //   axios.post('/search' , { action: {
-  //     remove:true,
-  //     book: id
-  //   } 
-  //   });
-  // }
+
+  function removeBook(id,element){
+    element.removeClass('clicked');
+    axios.post('/search' , { action: {
+      remove:true,
+      book: id
+    } 
+    });
+  }
   function addBook(id,element){
     element.removeClass('clicked');
     axios.post('/search' , { action: {
@@ -45,18 +36,8 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.add-book').click(function(e) {   
     const bookId = $(this).parent().attr('id');
     const that = $(this);
-    addBook(bookId,that);
+    $(this).hasClass('clicked') ? removeBook(bookId,that): addBook(bookId,that);
   });
-  // $('.star-book').click(function(e) {   
-  //   const bookId = $(this).parent().attr('id');
-  //   const that = $(this);
-  //   $(this).hasClass('clicked') ? removeFavBook(bookId,that) : addFavBook(bookId,that);
-  // });
-  // $('.add-book').click(function(e) {   
-  //   const bookId = $(this).parent().attr('id');
-  //   const that = $(this);
-  //   $(this).hasClass('clicked') ? removeBook(bookId,that) : addBook(bookId,that);
-  // });
 
 
 

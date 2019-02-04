@@ -10,12 +10,19 @@
         </div>
         <form action="/search" method="GET" id="testForm">
         <input type="text" name="starred" class="hidden" id="book-input">
+        <div class="book-icons" id={{this.id}}>
+          {{#if this.starred}}
+            <i class="fas fa-star star-book clicked" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i>
+          {{else}}
+            <i class="fas fa-star star-book" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i>
+          {{/if}}
+          {{#if this.added}}
+            <i class="fas fa-plus add-book clicked" data-toggle="tooltip" title="Add Book to Read Books" ></i>
+          {{else}}
+            <i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books" ></i>
+          {{/if}}
+        </div>
 
-        {{#if this.starred}}
-          <div class="book-icons" id={{this.id}}> <i class="fas fa-star star-book clicked" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i><i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books" ></i></div>
-        {{else}}
-          <div class="book-icons" id={{this.id}}> <i class="fas fa-star star-book" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i><i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books" ></i></div>
-        {{/if}}
 
         </form>
       
