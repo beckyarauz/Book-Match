@@ -406,15 +406,14 @@ site.get('/matches',ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
     //Query DB for list of users with a count their respective number of matching books
     BookList.aggregate([
       {
-         $match: { //match books with own book list
-          bookId: {$in: bookArr}
-          //,userId: {$ne: req.user._id} //exclude own user --> disable for testing
+        $match: { 
+          // userId: {$ne: req.user._id} //exclude own user --> disable for testing
         }
       },
       {
-        $group: { //aggregate matching books on each user
+        $group: { //calculate number matching books for each user
           _id: '$userId',
-          matchingBooks: {$sum:1}
+          matchingBooks: {$sum: {$cond: [{$in:["$bookId",bookArr]},1,0]}}
         }
       },
       {
@@ -425,11 +424,16 @@ site.get('/matches',ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
           as:'user'
         }
       },
+      {
+        $match: { //only display users that have books from requesting users own book list in their collection
+          // matchingBooks: {$gt: 0}
+        }
+      },
       {$unwind:"$user"}
     ]).sort({matchingBooks:-1}) //sort by number of matching books, descending
     .then((matches) => {
-      //res.send(matches)
-      res.render('matches-test',{matches:matches});
+      // res.send(matches)
+      res.render('matches',{matches:matches});
     })
     .catch(err => {
       console.log(err);
