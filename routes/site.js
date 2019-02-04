@@ -189,6 +189,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         'M': false
       };
 
+  
       switch (updatedUser.gender) {
         case 'F':
           genderResult['F'] = true;
