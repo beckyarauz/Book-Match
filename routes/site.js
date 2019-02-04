@@ -132,7 +132,8 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
 });
 
 site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  User.findOne({
+  // res.render('profileSetup');
+ User.findOne({
       username: req.user.username
     })
     .then(user => {

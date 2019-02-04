@@ -1,9 +1,7 @@
-<div class="container">
-  <h1>Profile Setup</h1>
+<div class="container setup-container">
   <div class="row">
     <div class="col-md-3 ">
       <div class="list-group ">
-        <a href="/profile" class="list-group-item list-group-item-action">Dashboard</a>
 
         <a href="#" class="list-group-item list-group-item-action active">Settings</a>
 
@@ -28,146 +26,130 @@
                   <div id="profilePic">
                     <img id="result" src="{{userpicture}}">
                   </div>
-                  <div id="croppie-upload">
-                    <form id="form1" runat="server">
-
-                      <div class="input-group">
-                        <div class="input-group-prepend" type="submit">
-                          <span class="input-group-text" id="use">Upload</span>
-                        </div>
-                        <div class="custom-file">
-                          <input type="file" class="custom-file-input" id="imgInp" accept="image/*">
-                          <label id="input-label" class="custom-file-label" for="imgInp"></label>
-                        </div>
-                      </div>
-                      <img id="my-image" src="#" />
-                    </form>
-
+                  
+                  <div>
+                    <img id="my-image" src="#" />
                   </div>
                 </div>
-
-
               </div>
-              <form action="/profile-setup" method="POST" id="setup">
-                <div class="form-group row">
-                  <input type="text" name="profilePic" id="input-profilePic" class="hidden" value={{userpicture}}>
-
-                  <input type="text" name="username" id="input-username" class="hidden" value={{username}}>
-
-
-                  <label for="name" class="col-4 col-form-label">First Name</label>
-                  <div class="col-8">
-                    <input id="name" name="firstName" value="{{firstname}}" placeholder="{{firstname}}" class="form-control here" type="text"
-                      required="required">
+              <div class="form-group row flex">
+                <div id="croppie-upload">
+                    {{!-- <form id="form1" runat="server"> --}}
+                      <a id="use" class="btn" type="submit">Upload</a>
+                      <input type="file" id="imgInp" accept="image/*">
+                      <label id="input-label" for="imgInp">BROWSE</label>
+                    {{!-- </form> --}}
                   </div>
-                </div>
-                <div class="form-group row">
-                  <label for="lastname" class="col-4 col-form-label">Last Name</label>
-                  <div class="col-8">
-                    <input id="lastname" name="lastName" value="{{lastname}}" placeholder="{{lastname}}" class="form-control here" type="text">
-                  </div>
-                </div>
-                
-                
-                <div class="form-check form-check-inline">
-                  <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" name="gender" id="inlineCheckbox1" value="F"> Female
-                    <span class="form-check-sign">
-                        <span class="check"></span>
-                    </span>
-                  </label>
-                </div>
-                <div class="form-check form-check-inline">
-                  <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" name="gender" id="inlineCheckbox2" value="M"> Male
-                    <span class="form-check-sign">
-                        <span class="check"></span>
-                    </span>
-                  </label>
-                </div>
-                <div class="form-check form-check-inline disabled">
-                  <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" name="gender" id="inlineCheckbox3" value="N" > Neutral
-                    <span class="form-check-sign">
-                        <span class="check"></span>
-                    </span>
-                  </label>
-                </div>
-{{!-- 
-                <div class="form-group row">
-                  <label for="email" class="col-4 col-form-label">Email*</label>
-                  <div class="col-8">
-                    <input id="email" name="email" placeholder="Email" class="form-control here" required="required"
-                      type="text">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="website" class="col-4 col-form-label">Website</label>
-                  <div class="col-8">
-                    <input id="website" name="website" placeholder="website" class="form-control here" type="text">
-                  </div>
-                </div> --}}
-                <div class="form-group row">
-                  <label for="description" class="col-4 col-form-label">Description</label>
-                  <div class="col-8">
-                    <textarea id="description" name="description" placeholder="{{description}}" cols="40" rows="4" class="form-control">{{description}}</textarea>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="country" class="col-4 col-form-label">Country</label>
-                  <div class="col-8">
-                    <input id="country" name="usercountry" value="{{usercountry}}" class="form-control here" type="text">
-                  </div>
-                </div>
-                
-                <div class="form-group row">
-                  <label for="city" class="col-4 col-form-label">City</label>
-                  <div class="col-8">
-                    <input id="city" name="usercity" value="{{usercity}}" class="form-control here" type="text">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="fbID" class="col-4 col-form-label">Facebook ID</label>
-                  <div class="col-8">
-                    <input id="fbID" name="userfbID" value="{{userfbID}}" class="form-control here" type="text">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="igID" class="col-4 col-form-label">Instagram ID</label>
-                  <div class="col-8">
-                    <input id="igID" name="userigID" value="{{userigID}}" class="form-control here" type="text">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="slackID" class="col-4 col-form-label">Slack ID</label>
-                  <div class="col-8">
-                    <input id="slackID" name="userslackID" value="{{userslackID}}" class="form-control here" type="text">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <label for="twitterID" class="col-4 col-form-label">Twitter ID</label>
-                  <div class="col-8">
-                    <input id="twitterID" name="usertwitterID" value="{{usertwitterID}}" class="form-control here" type="text">
-                  </div>
-                </div>
-
-                <div class="form-group row">
-                  <label for="newpass" class="col-4 col-form-label">New Password</label>
-                  <div class="col-8">
-                    <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="password">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="offset-4 col-8">
-                    <button name="submit" type="submit" class="btn btn-primary">Update My Profile</button>
-                  </div>
-                </div>
-              </form>
+              </div>
             </div>
           </div>
+          <form action="/profile-setup" method="POST" id="setup">
+            <div class="form-group row">
+              <input type="text" name="profilePic" id="input-profilePic" class="hidden" value={{userpicture}}>
 
+              <input type="text" name="username" id="input-username" class="hidden" value={{username}}>
+
+
+              <label for="name" class="col-4 col-form-label">First Name</label>
+              <div class="col-8">
+                <input id="name" name="firstName" value="{{firstname}}" placeholder="{{firstname}}" class="form-control here"
+                  type="text" required="required">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="lastname" class="col-4 col-form-label">Last Name</label>
+              <div class="col-8">
+                <input id="lastname" name="lastName" value="{{lastname}}" placeholder="{{lastname}}" class="form-control here"
+                  type="text">
+              </div>
+            </div>
+
+
+            <div class="form-check form-check-inline">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="gender" id="inlineCheckbox1" value="F"> Female
+                <span class="form-check-sign">
+                  <span class="check"></span>
+                </span>
+              </label>
+            </div>
+            <div class="form-check form-check-inline">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="gender" id="inlineCheckbox2" value="M"> Male
+                <span class="form-check-sign">
+                  <span class="check"></span>
+                </span>
+              </label>
+            </div>
+            <div class="form-check form-check-inline disabled">
+              <label class="form-check-label">
+                <input class="form-check-input" type="checkbox" name="gender" id="inlineCheckbox3" value="N"> Neutral
+                <span class="form-check-sign">
+                  <span class="check"></span>
+                </span>
+              </label>
+            </div>
+            <div class="form-group row">
+              <label for="description" class="col-4 col-form-label">Description</label>
+              <div class="col-8">
+                <textarea id="description" name="description" placeholder="{{description}}" cols="40" rows="4" class="form-control">{{description}}</textarea>
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="country" class="col-4 col-form-label">Country</label>
+              <div class="col-8">
+                <input id="country" name="usercountry" value="{{usercountry}}" class="form-control here" type="text">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="city" class="col-4 col-form-label">City</label>
+              <div class="col-8">
+                <input id="city" name="usercity" value="{{usercity}}" class="form-control here" type="text">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="fbID" class="col-4 col-form-label">Facebook ID</label>
+              <div class="col-8">
+                <input id="fbID" name="userfbID" value="{{userfbID}}" class="form-control here" type="text">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="igID" class="col-4 col-form-label">Instagram ID</label>
+              <div class="col-8">
+                <input id="igID" name="userigID" value="{{userigID}}" class="form-control here" type="text">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="slackID" class="col-4 col-form-label">Slack ID</label>
+              <div class="col-8">
+                <input id="slackID" name="userslackID" value="{{userslackID}}" class="form-control here" type="text">
+              </div>
+            </div>
+            <div class="form-group row">
+              <label for="twitterID" class="col-4 col-form-label">Twitter ID</label>
+              <div class="col-8">
+                <input id="twitterID" name="usertwitterID" value="{{usertwitterID}}" class="form-control here" type="text">
+              </div>
+            </div>
+
+            <div class="form-group row">
+              <label for="newpass" class="col-4 col-form-label">New Password</label>
+              <div class="col-8">
+                <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="password">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="offset-4 col-8">
+                <button name="submit" type="submit" class="btn btn-primary">Update My Profile</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
+
     </div>
   </div>
+</div>
+</div>
 </div>
