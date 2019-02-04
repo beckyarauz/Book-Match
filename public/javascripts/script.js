@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   $('[data-toggle="tooltip"]').tooltip(); 
 
   function removeBook(id,element){
-    element.removeClass('clicked');
+    element.toggleClass('clicked');
     axios.post('/search' , { action: {
       remove:true,
       book: id
@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
   function addBook(id,element){
-    element.removeClass('clicked');
+    element.toggleClass('clicked');
     axios.post('/search' , { action: {
       add:true,
       book: id
