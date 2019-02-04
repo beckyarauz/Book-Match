@@ -217,7 +217,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
       });
       user.save().then(user => {
           //console.log(user);
-          res.redirect('/profile-setup');
+          res.redirect('/profile');
         })
         .catch(err => {
           console.log(err)
