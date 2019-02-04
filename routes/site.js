@@ -480,7 +480,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       bookArr = bookList.map((el) => el.bookId)
       //res.send(bookList); 
       //res.send(bookArr);
-      console.log("Own book list: " + bookArr);
+      // console.log("Own book list: " + bookArr);
       //Query DB for list of users with a count their respective number of matching books
       BookList.aggregate([{
             $match: {
@@ -520,6 +520,8 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
         }) //sort by number of matching books, descending
         .then((matches) => {
           // res.send(matches)
+          //WE NEED TO PROJECT ONLY THE NECESSARY FIELDS 
+          console.log('my matches',matches);
           res.render('matches', {
             matches: matches
           });

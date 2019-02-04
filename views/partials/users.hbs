@@ -5,21 +5,21 @@
                 <div class="cardheader">
                 </div>
                 <div class="avatar">
-                   {{!-- Images cannot work right now b/c code does not match database model 
-                    {{#if this.user.userpicture}}
-                        <img alt="" src={{this.user.userpicture}}>
+                   {{!-- Images cannot work right now b/c code does not match database model  --}}
+                    {{#if this.user.picture}}
+                        <img alt="" src={{this.user.picture}}>
                     {{else}}
                         {{#if this.user.gender.F}}
-                            <img alt="" src='/images/woman-avatar.png'>
+                            <img alt="woman" src='/images/woman-avatar.png'>
                         {{/if}}
                          {{#if this.user.gender.M}}
-                            <img alt="" src='/images/man-avatar.png'>
+                            <img alt="man" src='/images/man-avatar.png'>
                         {{/if}}
                         {{#if this.user.gender.N}}
-                            <img alt="" src='/images/neutral-avatar.png'>
+                            <img alt="neutral" src='/images/neutral-avatar.png'>
                         {{/if}}
-                    {{/if}} --}}
-                     <img alt="" src='/images/neutral-avatar.png'>
+                    {{/if}}
+                     {{!-- <img alt="" src='/images/neutral-avatar.png'> --}}
                 </div>
                 <div class="info">
                     <div class="username">{{this.user.username}}</div>
