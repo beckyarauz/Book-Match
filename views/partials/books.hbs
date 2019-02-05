@@ -12,12 +12,12 @@
         <input type="text" name="starred" class="hidden" id="book-input">
         <div class="book-icons" id={{this.id}}>
           {{#if this.starred}}
-            <i class="fas fa-star star-book clicked" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i>
+            <i class="fas fa-star star-book clicked" data-toggle="tooltip" title="Remove Book of Favorites" id="star-book"></i>
           {{else}}
             <i class="fas fa-star star-book" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i>
           {{/if}}
           {{#if this.added}}
-            <i class="fas fa-plus add-book clicked" data-toggle="tooltip" title="Add Book to Read Books" ></i>
+            <i class="fas fa-plus add-book clicked" data-toggle="tooltip" title="Remove Book of Read Books" ></i>
           {{else}}
             <i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books" ></i>
           {{/if}}
