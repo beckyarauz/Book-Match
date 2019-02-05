@@ -30,12 +30,41 @@ function checkRoles(role) {
 const getUser = async (req,username) => {
   let user;
 
+  ownBookList = await BookList.find({
+    userId: req.user._id,
+  });
+
+  ownBookList = ownBookList.map((el) => el.bookId);
+  console.log(ownBookList);
   user = await User.findOne({
     username: username
   });
   booklist = await BookList.find({
     userId: user._id,
   }); 
+
+  numMatchingBooks = await BookList.aggregate([
+    {
+      $match: {
+        userId: {$eq: user._id} 
+      }
+    },
+    {
+      $group: { //calculate number matching books for each user
+        _id: '$userId',
+        matchingBooks: {
+          $sum: {
+            $cond: [{
+              $in: ["$bookId", ownBookList]
+            }, 1, 0]
+          }
+        }
+      }
+    }
+  ])
+
+  numMatchingBooks=numMatchingBooks[0].matchingBooks
+  // console.log(numMatchingBooks);
 
   let userInfo = {
     username : user.username,
@@ -53,6 +82,7 @@ const getUser = async (req,username) => {
     bookList: booklist,
     bookArr : [],
     favBookArr : [],
+    numMatchingBooks: numMatchingBooks
   }
   for (book of userInfo.bookList) {
     let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
@@ -109,6 +139,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
+      numMatchingBooks:numMatchingBooks
     });
   })();
 
@@ -116,11 +147,11 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 
 // //with params: render profile page for the user listed in the request
 site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  let isOwner = req.user.username === req.param.username;
-  let username = req.params.username;
-  (async () =>{
-    let user = await getUser(req,username);
   
+  (async () =>{
+    let username = req.params.username;
+    let user = await getUser(req,username);
+    let isOwner = req.user.username === username;
     res.render('profile', {
       username:user.username,
       gender:user.gender,
@@ -136,6 +167,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
+      numMatchingBooks:numMatchingBooks
     });
   })();
 
@@ -459,7 +491,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   //console.log("matches!");
   //Query DB for list of own read books
   let userSearch = req.query.username;
-  console.log("Search for user: "+ userSearch);
+  // console.log("Search for user: "+userSearch);
 
   (async () =>{
       let bookList = await BookList.find({
