@@ -457,6 +457,9 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
 
 site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   //console.log("matches!");
+  let userSearch = req.query.username;
+  console.log("Search for user: "+userSearch);
+
   //Query DB for list of own read books
   BookList.find({
       userId: req.user._id
@@ -468,60 +471,106 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       //res.send(bookArr);
       // console.log("Own book list: " + bookArr);
       //Query DB for list of users with a count their respective number of matching books
-      BookList.aggregate([{
-            $match: {
-              userId: {$ne: req.user._id} //exclude own user --> disable for testing
-            }
-          },
-          {
-            $group: { //calculate number matching books for each user
-              _id: '$userId',
-              matchingBooks: {
-                $sum: {
-                  $cond: [{
-                    $in: ["$bookId", bookArr]
-                  }, 1, 0]
-                }
+
+      User.aggregate([
+        
+        {
+          $match: {
+            _id: {$ne: req.user._id} //exclude own user --> disable for testing
+          }
+        },
+        {
+          $lookup: {
+            from: 'booklists',
+            //localField: '_id',
+            localField: '_id',
+            foreignField: 'userId',
+            as: 'booklist'
+          }
+        },
+        {
+          $unwind: {
+            path: "$booklist",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        {
+          $group: { //calculate number matching books for each user
+            _id: '$_id',
+            matchingBooks: {
+              $sum: {
+                $cond: [{
+                  $in: ["$booklist.bookId", bookArr]
+                }, 1, 0]
               }
             }
-          },
-          {
-            $lookup: { //lookup user details from "users" collection
-              from: 'users',
-              localField: '_id',
-              foreignField: '_id',
-              as: 'user'
-            }
-          },
-          {
-            $match: { //only display users that have books from requesting users own book list in their collection
-              matchingBooks: {$gt: 0}
-            }
-          },
-          {
-            $unwind: "$user"
           }
-        ]).sort({
-          matchingBooks: -1
-        }) //sort by number of matching books, descending
-        .then((matches) => {
-          // res.send(matches)
-          //WE NEED TO PROJECT ONLY THE NECESSARY FIELDS 
-          // console.log('my matches',matches);
-          res.render('matches', {
-            matches: matches
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          res.send(err);
-        })
-    })
-    .catch(err => {
-      console.log(err);
-      res.send(err);
-    });
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        {
+          $unwind: {
+            path: "$user",
+            preserveNullAndEmptyArrays: true
+          }
+        },
+        /* {
+          $addFields: {
+            isFriend: {
+              $cond: [{
+                $and: [
+                  //{$user.friends $exists: },
+                  {$in: ["$_id",{
+                    // $ifNull: ["$user.friends","$[]"]
+                    $ifNull: ["$user.friends",{$objectToArray:null}]
+                  }]}
+                ]  
+              },true,false]
+            }
+          }
+        }, */
+        {
+          $match: { //only display users that have books from requesting users own book list in their collection
+            // matchingBooks: {$gt: 0}
+          }
+        }
+      ]).sort({
+        matchingBooks: -1
+      }) //sort by number of matching books, descending
+      .then((matches) => {
+        // res.send(matches)
+        //WE NEED TO PROJECT ONLY THE NECESSARY FIELDS 
+        // console.log('my matches',matches);
+        //if (userSearch = undefined) filteredMatches = matches;
+        let filteredMatches =[];
+        matches.forEach((el) => {
+            // console.log (el)
+            if (userSearch) {
+              if (el.user.username.includes(userSearch)) filteredMatches.push(el);
+            }
+            else {
+              if (el.matchingBooks>0) filteredMatches.push(el)
+            }
+        });
+        res.render('matches', {matches: filteredMatches});
+      })
+      .catch(err => {
+        console.log(err);
+        res.send(err);
+      })
+  })
+  .catch(err => {
+    console.log(err);
+    res.send(err);
+  });
 });
+
 
 site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
 
