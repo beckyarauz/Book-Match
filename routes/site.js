@@ -458,73 +458,248 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
 site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   //console.log("matches!");
   //Query DB for list of own read books
-  BookList.find({
-      userId: req.user._id
-    })
-    .then((bookList) => {
-      //console.log(bookList);
+
+  (async () =>{
+      let bookList = await BookList.find({
+          userId: req.user._id
+        });
+    
       bookArr = bookList.map((el) => el.bookId)
-      //res.send(bookList); 
-      //res.send(bookArr);
-      // console.log("Own book list: " + bookArr);
       //Query DB for list of users with a count their respective number of matching books
-      BookList.aggregate([{
-            $match: {
-              userId: {$ne: req.user._id} //exclude own user --> disable for testing
-            }
-          },
-          {
-            $group: { //calculate number matching books for each user
-              _id: '$userId',
-              matchingBooks: {
-                $sum: {
-                  $cond: [{
-                    $in: ["$bookId", bookArr]
-                  }, 1, 0]
-                }
+      
+      let matches =  await BookList.aggregate([{
+          $match: {
+            userId: {$ne: req.user._id} //exclude own user --> disable for testing
+          }
+        },
+        {
+          $group: { //calculate number matching books for each user
+            _id: '$userId',
+            matchingBooks: {
+              $sum: {
+                $cond: [{
+                  $in: ["$bookId", bookArr]
+                }, 1, 0]
               }
             }
-          },
-          {
-            $lookup: { //lookup user details from "users" collection
-              from: 'users',
-              localField: '_id',
-              foreignField: '_id',
-              as: 'user'
-            }
-          },
-          {
-            $match: { //only display users that have books from requesting users own book list in their collection
-              matchingBooks: {$gt: 0}
-            }
-          },
-          {
-            $unwind: "$user"
           }
-        ]).sort({
-          matchingBooks: -1
-        }) //sort by number of matching books, descending
-        .then((matches) => {
-          // res.send(matches)
-          //WE NEED TO PROJECT ONLY THE NECESSARY FIELDS 
-          // console.log('my matches',matches);
-          res.render('matches', {
-            matches: matches
-          });
-        })
-        .catch(err => {
-          console.log(err);
-          res.send(err);
-        })
-    })
-    .catch(err => {
-      console.log(err);
-      res.send(err);
-    });
+        },
+        {
+          $lookup: { //lookup user details from "users" collection
+            from: 'users',
+            localField: '_id',
+            foreignField: '_id',
+            as: 'user'
+          }
+        },
+        // {
+        //   $lookup: { //lookup user details from "users" collection
+        //     from: 'users',
+        //     localField: '_id',
+        //     foreignField: { $in: 'friends' },
+        //     as: 'added'
+        //   }
+        // },
+        {
+          $match: { //only display users that have books from requesting users own book list in their collection
+            matchingBooks: {$gt: 0}
+          }
+        },
+        {
+          $unwind: "$user"
+        },
+      ]).sort({
+        matchingBooks: -1
+      });
+
+      console.log(matches);
+      res.render('matches', {
+              matches: matches
+            });
+      
+
+
+
+      })()
+
+      
+      
+       //sort by number of matching books, descending
+        // .then((matches) => {
+        //   console.log('my matches',matches);
+        //   res.render('matches', {
+        //     matches: matches
+        //   });
+        // })
+
+
+      // BookList.aggregate([{
+      //       $match: {
+      //         userId: {$ne: req.user._id} //exclude own user --> disable for testing
+      //       }
+      //     },
+      //     {
+      //       $group: { //calculate number matching books for each user
+      //         _id: '$userId',
+      //         matchingBooks: {
+      //           $sum: {
+      //             $cond: [{
+      //               $in: ["$bookId", bookArr]
+      //             }, 1, 0]
+      //           }
+      //         }
+      //       }
+      //     },
+      //     {
+      //       $lookup: { //lookup user details from "users" collection
+      //         from: 'users',
+      //         localField: '_id',
+      //         foreignField: '_id',
+      //         as: 'user'
+      //       }
+      //     },
+      //     {
+      //       $match: { //only display users that have books from requesting users own book list in their collection
+      //         matchingBooks: {$gt: 0}
+      //       }
+      //     },
+      //     {
+      //       $unwind: "$user"
+      //     }
+      //   ]).sort({
+      //     matchingBooks: -1
+      //   }) //sort by number of matching books, descending
+      //   .then((matches) => {
+      //     console.log('my matches',matches);
+      //     res.render('matches', {
+      //       matches: matches
+      //     });
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //     res.send(err);
+      //   })
+
 });
 
-site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
+// site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
+//   //console.log("matches!");
+//   //Query DB for list of own read books
+//   BookList.find({
+//       userId: req.user._id
+//     })
+//     .then((bookList) => {
+//       //console.log(bookList);
+//       bookArr = bookList.map((el) => el.bookId)
+//       //res.send(bookList); 
+//       //res.send(bookArr);
+//       // console.log("Own book list: " + bookArr);
+//       //Query DB for list of users with a count their respective number of matching books
+//       BookList.aggregate([{
+//             $match: {
+//               userId: {$ne: req.user._id} //exclude own user --> disable for testing
+//             }
+//           },
+//           {
+//             $group: { //calculate number matching books for each user
+//               _id: '$userId',
+//               matchingBooks: {
+//                 $sum: {
+//                   $cond: [{
+//                     $in: ["$bookId", bookArr]
+//                   }, 1, 0]
+//                 }
+//               }
+//             }
+//           },
+//           {
+//             $lookup: { //lookup user details from "users" collection
+//               from: 'users',
+//               localField: '_id',
+//               foreignField: '_id',
+//               as: 'user'
+//             }
+//           },
+//           {
+//             $match: { //only display users that have books from requesting users own book list in their collection
+//               matchingBooks: {$gt: 0}
+//             }
+//           },
+//           {
+//             $unwind: "$user"
+//           }
+//         ]).sort({
+//           matchingBooks: -1
+//         }) //sort by number of matching books, descending
+//         .then((matches) => {
+//           // res.send(matches)
+//           //WE NEED TO PROJECT ONLY THE NECESSARY FIELDS 
+//           // console.log('my matches',matches);
+//           res.render('matches', {
+//             matches: matches
+//           });
+//         })
+//         .catch(err => {
+//           console.log(err);
+//           res.send(err);
+//         })
+//     })
+//     .catch(err => {
+//       console.log(err);
+//       res.send(err);
+//     });
+// });
 
+site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
+  const action = req.body.action;
+  console.log('matches action',action);
+  (async () =>{
+    if(action.add){
+      let user = await User.findOne({
+        '_id': req.user._id,
+        // 'friends': req.user._id //Test id 
+        'friends': action.user
+      });
+
+      if(!user || user === null || user === undefined){
+        console.log('Friend not found!');
+        user = await User.findOne({
+          '_id': req.user._id,
+        });
+
+        user.friends.push(action.user);
+
+        let updatedFriends = await user.set({
+          friends: user.friends
+        });
+        console.log('You added a Friend! friends:',updatedFriends.friends);
+
+        updatedFriends.save();
+      } else {
+        console.log('This user is already added to your Friends');
+      }
+
+    } else if(action.remove){
+      user = await User.findOne({
+        '_id': req.user._id,
+      });
+
+      let removed = user.friends.splice(action.user,'');
+
+      let updatedFriends = await user.set({
+        friends: removed
+      });
+
+      console.log('You removed a Friend! friends:',updatedFriends.friends);
+
+      updatedFriends.save();
+    }
+  
+    res.render('matches');
+
+
+  })()
+  
 })
 
 module.exports = site;
