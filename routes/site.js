@@ -25,6 +25,8 @@ function checkRoles(role) {
     }
   }
 }
+
+// getUser function gets all the information needed to be rendered on user profiles
 const getUser = async (req,username) => {
   let user;
 
@@ -66,27 +68,6 @@ const getUser = async (req,username) => {
   return userInfo;
 }
 
-const getAllInfo = async (req,res,username,owner) => {
-  let user = await getUser(req,username);
-  // console.log('bookArr after API call',bookArr);
-  res.render('profile', {
-    username:user.username,
-    gender:user.gender,
-    favbooks: user.favBookArr,
-    books: user.bookArr,
-    firstname:user.firstname,
-    lastname:user.lastname,
-    userpicture:user.userpicture,
-    usercountry:user.usercountry,
-    usercity:user.usercity,
-    userfbID:user.userfbID,
-    userigID:user.userigID,
-    userslackID:user.userslackID,
-    usertwitterID:user.usertwitterID,
-    isProfileOwner:owner,
-  });
-}
-
 const createBookList = async (userId, bookId, starred) => {
   bookList = new BookList({
     userId: userId,
@@ -110,7 +91,26 @@ site.get("/home", (req, res, next) => {
 site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let isOwner = true;
   let username = req.user.username;
-  getAllInfo(req,res,username,isOwner);
+  (async () =>{
+    let user = await getUser(req,username);
+  
+    res.render('profile', {
+      username:user.username,
+      gender:user.gender,
+      favbooks: user.favBookArr,
+      books: user.bookArr,
+      firstname:user.firstname,
+      lastname:user.lastname,
+      userpicture:user.userpicture,
+      usercountry:user.usercountry,
+      usercity:user.usercity,
+      userfbID:user.userfbID,
+      userigID:user.userigID,
+      userslackID:user.userslackID,
+      usertwitterID:user.usertwitterID,
+      isProfileOwner:isOwner,
+    });
+  })();
 
 });
 
@@ -118,12 +118,30 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let isOwner = req.user.username === req.param.username;
   let username = req.params.username;
-  getAllInfo(req,res,username,isOwner);
+  (async () =>{
+    let user = await getUser(req,username);
+  
+    res.render('profile', {
+      username:user.username,
+      gender:user.gender,
+      favbooks: user.favBookArr,
+      books: user.bookArr,
+      firstname:user.firstname,
+      lastname:user.lastname,
+      userpicture:user.userpicture,
+      usercountry:user.usercountry,
+      usercity:user.usercity,
+      userfbID:user.userfbID,
+      userigID:user.userigID,
+      userslackID:user.userslackID,
+      usertwitterID:user.usertwitterID,
+      isProfileOwner:isOwner,
+    });
+  })();
 
 });
 
 site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  // res.render('profileSetup');
  User.findOne({
       username: req.user.username
     })
@@ -166,7 +184,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
       username: updatedUser.username
     })
     .then(user => {
-      console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
+      // console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
       if (updatedUser.password === "") {
         updatedUser.password = user.password;
       } else {
@@ -286,7 +304,7 @@ site.get('/search', (req, res, next) => {
           .catch(e => console.log(e.message));
         } else{
           bookInfo = items.map(item => {
-            console.log(item.volumeInfo.imageLinks);
+            // console.log(item.volumeInfo.imageLinks);
             return {
               'id': item.id,
               'image': item.volumeInfo.imageLinks ?  item.volumeInfo.imageLinks.thumbnail : 'images/book_404.png',
@@ -337,7 +355,8 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                   })
                   .then(user => {
                     // console.log('updated User:', user);
-                  });
+                  })
+                  .catch(e => console.log(e.message));
               } else if (action.add) {
                 console.log('you added book to your collection');
                 createBookList(user._id, action.book, false);
@@ -361,7 +380,7 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                   });
                   book.save()
                     .then(book => {
-                      console.log(book);
+                      console.log('savedBook:',book);
                     }).catch(e => {
                       console.log(e.message)
                     });
@@ -417,7 +436,7 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, next) => {
   //const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
-  console.log(req.params.bookID);
+  // console.log(req.params.bookID);
   const url = `https://www.googleapis.com/books/v1/volumes/${req.params.bookID}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
   let items;
   request(url, function (error, response, body) {
@@ -489,7 +508,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
         .then((matches) => {
           // res.send(matches)
           //WE NEED TO PROJECT ONLY THE NECESSARY FIELDS 
-          console.log('my matches',matches);
+          // console.log('my matches',matches);
           res.render('matches', {
             matches: matches
           });
