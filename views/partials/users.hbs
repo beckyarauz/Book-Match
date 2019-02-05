@@ -9,13 +9,13 @@
                     {{#if this.user.picture}}
                         <img alt="" src={{this.user.picture}}>
                     {{else}}
-                        {{#if this.gender.F}}
+                        {{#if this.user.gender.F}}
                             <img alt="woman" src='/images/woman-avatar.png'>
                         {{/if}}
-                         {{#if this.gender.M}}
+                         {{#if this.user.gender.M}}
                             <img alt="man" src='/images/man-avatar.png'>
                         {{/if}}
-                        {{#if this.gender.N}}
+                        {{#if this.user.gender.N}}
                             <img alt="neutral" src='/images/neutral-avatar.png'>
                         {{/if}}
                     {{/if}}
