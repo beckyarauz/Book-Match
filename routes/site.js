@@ -8,6 +8,14 @@ const checkGuest = checkRoles('GUEST');
 const checkEditor = checkRoles('EDITOR');
 const checkAdmin = checkRoles('ADMIN');
 
+// const uploadCloud = require('../config/cloudinary.js');
+var cloudinary = require('cloudinary');
+cloudinary.config({ 
+  cloud_name: process.env.CLOUDINARY_NAME, 
+  api_key: process.env.CLOUDINARY_KEY, 
+  api_secret: process.env.CLOUDINARY_SECRET 
+});
+
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
@@ -64,7 +72,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     bookList = await BookList.find({
       userId: user._id,
     });
-    console.log('bookList from DB:',bookList);
+    // console.log('bookList from DB:',bookList);
     for (book of bookList) {
       let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
       const response = await fetch(url);
@@ -82,7 +90,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
   const getAllInfo = async () => {
     await getUser(req);
-    console.log('bookArr after API call',bookArr);
+    // console.log('bookArr after API call',bookArr);
     res.render('profile', {
       username,
       gender,
@@ -155,11 +163,21 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 });
 
 site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
+  let base64Pic = req.body.profilePic;
+
+  let genderResult = {
+        'N': false,
+        'F': false,
+        'M': false
+      };
+  
   let updatedUser = {
     username: req.user.username,
     firstname: req.body.firstName,
     lastname: req.body.lastName,
-    userpicture: req.body.profilePic,
+    userpicture: base64Pic,
+    cloudinaryPic: req.user.cloudinaryPic,
+    cloudinaryElement:req.user.cloudinaryElement,
     description: req.body.description,
     country: req.body.usercountry,
     city: req.body.usercity,
@@ -170,7 +188,25 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     password: req.body.newpass,
     gender: req.body.gender
   };
-  //console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
+
+  if(base64Pic != undefined){
+    console.log('THERE IS A NEW PIC');
+    cloudinary.v2.uploader.upload(base64Pic, 
+      function(error, result) {
+        console.log('cloudinary pic:',req.user.cloudinaryPic);
+        if(req.user.cloudinaryPic != undefined){
+          console.log('THERE IS A CLOUDINARY ID');
+          cloudinary.uploader.destroy(req.user.cloudinaryPic, function(result) {
+             console.log('destroyed cloudinary pic',result)
+              });
+        }
+        updatedUser.cloudinaryPic = result.public_id;
+        let imageElement = cloudinary.image(updatedUser.cloudinaryPic, { alt: "avatar" ,class:"img-raised rounded-circle img-fluid"});
+        updatedUser.cloudinaryElement = imageElement;
+        // console.log(imageElement);
+      });
+  }
+
   User.findOne({
       username: updatedUser.username
     })
@@ -182,13 +218,6 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         let salt = bcrypt.genSaltSync(bcryptSalt);
         updatedUser.password = bcrypt.hashSync(updatedUser.password, salt);
       }
-
-      let genderResult = {
-        'N': false,
-        'F': false,
-        'M': false
-      };
-
   
       switch (updatedUser.gender) {
         case 'F':
@@ -206,6 +235,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         firstName: updatedUser.firstname,
         lastName: updatedUser.lastname,
         picture: updatedUser.userpicture,
+        cloudinaryPic:updatedUser.cloudinaryPic,
+        cloudinaryElement:updatedUser.cloudinaryElement,
         description: updatedUser.description,
         country: updatedUser.country,
         city: updatedUser.city,
@@ -217,7 +248,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         gender: genderResult
       });
       user.save().then(user => {
-          //console.log(user);
+          console.log(user);
           res.redirect('/profile');
         })
         .catch(err => {

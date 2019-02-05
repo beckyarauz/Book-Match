@@ -11,6 +11,8 @@ const userSchema = new Schema({
   firstName:String,
   lastName: String,
   picture: String,
+  cloudinaryPic:String,
+  cloudinaryElement:String,
   description: String,
   country: String,
   city: String,
