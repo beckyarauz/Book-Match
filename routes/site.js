@@ -520,6 +520,21 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             preserveNullAndEmptyArrays: true
           }
         },
+        /* {
+          $addFields: {
+            isFriend: {
+              $cond: [{
+                $and: [
+                  //{$user.friends $exists: },
+                  {$in: ["$_id",{
+                    // $ifNull: ["$user.friends","$[]"]
+                    $ifNull: ["$user.friends",{$objectToArray:null}]
+                  }]}
+                ]  
+              },true,false]
+            }
+          }
+        }, */
         {
           $match: { //only display users that have books from requesting users own book list in their collection
             // matchingBooks: {$gt: 0}
