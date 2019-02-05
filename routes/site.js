@@ -15,6 +15,90 @@ const User = require('../models/user');
 const Book = require('../models/book');
 const BookList = require('../models/bookList');
 
+
+function checkRoles(role) {
+  return function (req, res, next) {
+    if (req.isAuthenticated() && req.user.role === role) {
+      return next();
+    } else {
+      res.redirect('/home')
+    }
+  }
+}
+const getUser = async (req,username) => {
+  let user;
+
+  user = await User.findOne({
+    username: username
+  });
+  booklist = await BookList.find({
+    userId: user._id,
+  }); 
+
+  let userInfo = {
+    username : user.username,
+    firstname : user.firstName,
+    lastname : user.lastName,
+    gender : user.gender,
+    userpicture : user.picture,
+    usercountry : user.country,
+    usercity : user.city,
+    userfbID : user.fbID,
+    userigID : user.igID,
+    userslackID : user.slackID,
+    usertwitterID : user.twitterID,
+    isProfileOwner : req.params.username == req.user.username,
+    bookList: booklist,
+    bookArr : [],
+    favBookArr : [],
+  }
+  for (book of userInfo.bookList) {
+    let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+    const response = await fetch(url);
+    const json = await response.json();
+
+    userInfo.bookArr.push(json.volumeInfo);
+
+    if (book.starred) {
+      userInfo.favBookArr.push(json.volumeInfo);
+    }
+  }
+  return userInfo;
+}
+
+const getAllInfo = async (req,res,username,owner) => {
+  let user = await getUser(req,username);
+  // console.log('bookArr after API call',bookArr);
+  res.render('profile', {
+    username:user.username,
+    gender:user.gender,
+    favbooks: user.favBookArr,
+    books: user.bookArr,
+    firstname:user.firstname,
+    lastname:user.lastname,
+    userpicture:user.userpicture,
+    usercountry:user.usercountry,
+    usercity:user.usercity,
+    userfbID:user.userfbID,
+    userigID:user.userigID,
+    userslackID:user.userslackID,
+    usertwitterID:user.usertwitterID,
+    isProfileOwner:owner,
+  });
+}
+
+const createBookList = async (userId, bookId, starred) => {
+  bookList = new BookList({
+    userId: userId,
+    bookId: bookId,
+    starred: starred
+  })
+
+  mybook = await bookList.save();
+  console.log('The book was saved!', mybook);
+  return mybook;
+}
+
 site.get("/", (req, res, next) => {
   res.render("home");
 });
@@ -24,110 +108,17 @@ site.get("/home", (req, res, next) => {
 
 // //without params: render profile page for logged in user
 site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  let username,
-    firstname,
-    lastname,
-    gender,
-    userpicture,
-    usercountry,
-    usercity,
-    userfbID,
-    userigID,
-    userslackID,
-    usertwitterID,
-    isProfileOwner,
-    bookList,
-    bookArr = [];
-    favBookArr = [];
-
-
-  const getUser = async () => {
-    let user;
-
-    user = await User.findOne({
-      username: req.user.username
-    });
-
-    username = user.username;
-    firstname = user.firstName;
-    lastname = user.lastName;
-    gender = user.gender;
-    userpicture = user.picture;
-    usercountry = user.country;
-    usercity = user.city;
-    userfbID = user.fbID;
-    userigID = user.igID;
-    userslackID = user.slackID;
-    usertwitterID = user.twitterID;
-    isProfileOwner = true;
-
-    bookList = await BookList.find({
-      userId: user._id,
-    });
-    console.log('bookList from DB:',bookList);
-    for (book of bookList) {
-      let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
-      const response = await fetch(url);
-      const json = await response.json();
-
-      bookArr.push(json.volumeInfo);
-      
-
-      if (book.starred) {
-        favBookArr.push(json.volumeInfo);
-      }
-    }
-  }
-
-  
-  const getAllInfo = async () => {
-    await getUser(req);
-    console.log('bookArr after API call',bookArr);
-    res.render('profile', {
-      username,
-      gender,
-      favbooks: favBookArr,
-      books: bookArr,
-      firstname,
-      lastname,
-      userpicture,
-      usercountry,
-      usercity,
-      userfbID,
-      userigID,
-      userslackID,
-      usertwitterID,
-      isProfileOwner,
-    });
-  }
-
-  getAllInfo();
+  let isOwner = true;
+  let username = req.user.username;
+  getAllInfo(req,res,username,isOwner);
 
 });
 
 // //with params: render profile page for the user listed in the request
 site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-
-  User.findOne({
-      username: req.params.username
-    })
-    .then(user => {
-      let isOwner = req.params.username == req.user.username;
-      res.render('profile', {
-        username: user.username,
-        firstname: user.firstName,
-        lastname: user.lastName,
-        userpicture: user.picture,
-        usercountry: user.country,
-        usercity: user.city,
-        userfbID: user.fbID,
-        userigID: user.igID,
-        userslackID: user.slackID,
-        usertwitterID: user.twitterID,
-        isProfileOwner: isOwner
-      });
-    })
-    .catch(err => console.log(err));
+  let isOwner = req.user.username === req.param.username;
+  let username = req.params.username;
+  getAllInfo(req,res,username,isOwner);
 
 });
 
@@ -345,7 +336,7 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                     starredBookLimit: ++req.user.starredBookLimit
                   })
                   .then(user => {
-                    console.log('updated User:', user);
+                    // console.log('updated User:', user);
                   });
               } else if (action.add) {
                 console.log('you added book to your collection');
@@ -380,7 +371,7 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                       starredBookLimit: ++req.user.starredBookLimit
                     })
                     .then(user => {
-                      console.log('updated User:', user);
+                      // console.log('updated User:', user);
                     });
                 } else if (req.user.starredBookLimit > 0) {
                   console.log('this book will be added to your favorites');
@@ -394,7 +385,7 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                       starredBookLimit: --req.user.starredBookLimit
                     })
                     .then(user => {
-                      console.log('updated User:', user);
+                      // console.log('updated User:', user);
                     });
                 } else {
                   console.log(`You can't add more books, you reached your limits.`, `Your book limit: ${req.user.starredBookLimit}`);
@@ -445,29 +436,6 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
     }
   })
 })
-
-
-function checkRoles(role) {
-  return function (req, res, next) {
-    if (req.isAuthenticated() && req.user.role === role) {
-      return next();
-    } else {
-      res.redirect('/home')
-    }
-  }
-}
-
-async function createBookList(userId, bookId, starred) {
-  bookList = new BookList({
-    userId: userId,
-    bookId: bookId,
-    starred: starred
-  })
-
-  mybook = await bookList.save();
-  console.log('The book was saved!', mybook);
-  return mybook;
-}
 
 site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   //console.log("matches!");
