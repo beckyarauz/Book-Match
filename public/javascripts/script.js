@@ -98,7 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   //CROPPIE ENDS
     function removeFriend(id,element){
-    element.toggleClass('clicked');
+      element.toggleClass('added');
     axios.post('/matches' , { action: {
       remove:true,
       user: id
@@ -107,7 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function addFriend(id,element){
-    element.toggleClass('clicked');
+    element.toggleClass('added');
     axios.post('/matches' , { action: {
       add:true,
       user: id
@@ -118,9 +118,9 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.add-friend').click(function(e) {   
     const userId = $(this).parent().attr('id');
     const that = $(this);
-    addFriend(userId,that);
+    // addFriend(userId,that);
     // removeFriend(userId,that);
-    // $(this).hasClass('clicked') ? removeFriend(userId,that): addFriend(userId,that);
+    $(this).attr('id') === 'remove-friend' ? removeFriend(userId,that): addFriend(userId,that);
   });
   
 

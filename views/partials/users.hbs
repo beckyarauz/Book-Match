@@ -30,13 +30,13 @@
                     </a>
                     <div class="user-icons" id={{this.user._id}}>
 
-                        {{#if this.added}}
-                        <i class="material-icons clicked add-friend" data-toggle="tooltip" title="Add Friend" id="add-friend">
-                            person_add
-                        </i>
-                        {{else}}
+                        {{#if this.user.added}}
                         <i class="material-icons add-friend" data-toggle="tooltip" title="Remove Friend" id="remove-friend">
                             person_add_disabled
+                        </i>
+                        {{else}}
+                        <i class="material-icons add-friend" data-toggle="tooltip" title="Add Friend" id="add-friend">
+                            person_add
                         </i>
                         {{/if}}
                     </div>
