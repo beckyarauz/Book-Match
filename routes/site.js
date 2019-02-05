@@ -471,7 +471,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       //Query DB for list of users with a count their respective number of matching books
       BookList.aggregate([{
             $match: {
-              // userId: {$ne: req.user._id} //exclude own user --> disable for testing
+              userId: {$ne: req.user._id} //exclude own user --> disable for testing
             }
           },
           {
@@ -496,7 +496,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
           },
           {
             $match: { //only display users that have books from requesting users own book list in their collection
-              // matchingBooks: {$gt: 0}
+              matchingBooks: {$gt: 0}
             }
           },
           {
