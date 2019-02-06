@@ -1,5 +1,4 @@
 const Tagify = require('@yaireo/tagify');
-
 document.addEventListener('DOMContentLoaded', () => {
   //TAGGIFY
   var input = document.querySelector('input[name=tags]'),

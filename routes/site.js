@@ -8,8 +8,6 @@ const checkGuest = checkRoles('GUEST');
 const checkEditor = checkRoles('EDITOR');
 const checkAdmin = checkRoles('ADMIN');
 
-// var tagify = new Tagify(...)
-
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
