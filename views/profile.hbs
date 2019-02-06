@@ -31,9 +31,12 @@
               {{#unless isProfileOwner}}
               <h5>{{numMatchingBooks}} matching Books</h5>
               {{/unless}}
-              <a href="#" class="btn btn-just-icon btn-link btn-dribbble"><i class="fab fa-dribbble"></i></a>
-              <a href="#" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
-              <a href="#" class="btn btn-just-icon btn-link btn-pinterest"><i class="fab fa-pinterest"></i></a>
+              {{#if usertwitterID}}
+              <a href="https://twitter.com/{{usertwitterID}}" class="btn btn-just-icon btn-link btn-twitter"><i class="fab fa-twitter"></i></a>
+              {{/if}}
+              {{#if userfbID}}
+              <a href="https://facebook.com/{{userfbID}}" class="btn btn-just-icon btn-link btn-fb"><i class="fab fa-facebook"></i></a>
+              {{/if}}
             </div>
           </div>
         </div>
@@ -84,8 +87,15 @@
             <div class="col-12">
               <h3>Country:</h3>
               <p>{{usercountry}}</p>
+              
+              {{#if languages}}
               <h3>Languages:</h3>
-              <p>English, Spanish</p>
+              <ul>
+              {{#each languages}}
+              <li>{{this}}</li>
+              {{/each}}
+              </ul>
+              {{/if}}
               <h3>Book Genre:</h3>
               <ul>
                 <li>Dogs</li>
