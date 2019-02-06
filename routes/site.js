@@ -46,7 +46,7 @@ const getUser = async (req,username) => {
     booklist = await BookList.find({
       userId: user._id,
     }); 
-    console.log('booklist',booklist);
+    // console.log('booklist',booklist);
     let numMatchingBooks;
     if(booklist !== null && booklist !== undefined && booklist.length > 0){
       numMatchingBooks = await BookList.aggregate([
@@ -68,11 +68,11 @@ const getUser = async (req,username) => {
           }
         }
       ])
-      console.log('numMatchingBooks',numMatchingBooks);
+      // console.log('numMatchingBooks',numMatchingBooks);
       if(numMatchingBooks !== undefined){
         numMatchingBooks = numMatchingBooks[0].matchingBooks;
       }
-      console.log('numMatchingBooks',numMatchingBooks);
+      // console.log('numMatchingBooks',numMatchingBooks);
     }
 
     let userInfo = {
@@ -118,15 +118,20 @@ const getUser = async (req,username) => {
 }
 
 const createBookList = async (userId, bookId, starred) => {
-  bookList = new BookList({
-    userId: userId,
-    bookId: bookId,
-    starred: starred
-  })
-
-  mybook = await bookList.save();
-  console.log('The book was saved!', mybook);
-  return mybook;
+  try {
+    bookList = new BookList({
+      userId: userId,
+      bookId: bookId,
+      starred: starred
+    })
+  
+    mybook = await bookList.save();
+    console.log('The book was saved!', mybook);
+    return mybook;
+  } catch(e){
+    console.log('createBookList function error:', e.message);
+  }
+  
 }
 
 site.get("/", (req, res, next) => {
@@ -141,7 +146,8 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let isOwner = true;
   let username = req.user.username;
   (async () =>{
-    let user = await getUser(req,username);
+    try{
+      let user = await getUser(req,username);
     // console.log(user.friends);
     console.log(user.bookArr);
     let friendsInfo = await User.find({'_id':{$in:user.friends}});
@@ -165,6 +171,10 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       isProfileOwner:isOwner,
       numMatchingBooks:user.numMatchingBooks
     });
+    } catch (e){
+      console.log('GET /profile error:', e.message);
+    }
+    
   })();
 
 });
@@ -173,7 +183,8 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
   (async () =>{
-    let username = req.params.username;
+    try{
+      let username = req.params.username;
     let user = await getUser(req,username);
     let isOwner = req.user.username === username;
 
@@ -195,6 +206,10 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
       isProfileOwner:isOwner,
       numMatchingBooks:user.numMatchingBooks
     });
+    } catch(e){
+      console.log('GET /profile error:', e.message);
+    }
+    
   })();
 
 });
@@ -520,83 +535,88 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   // console.log("Search for user: "+userSearch);
 
   (async () =>{
+    try{
       let bookList = await BookList.find({
-          userId: req.user._id
-        });
-      
-      let userInfo = await User.findOne({'_id': req.user._id});
-      let myFriends = userInfo.friends;
-      console.log('my Friends:',myFriends);
+        userId: req.user._id
+      });
     
-      bookArr = bookList.map((el) => el.bookId)
-      //Query DB for list of users with a count their respective number of matching books
-      
-      let matches =  await BookList.aggregate([{
-          $match: {
-            userId: {$ne: req.user._id} //exclude own user --> disable for testing
-          }
-        },
-        {
-          $group: { //calculate number matching books for each user
-            _id: '$userId',
-            matchingBooks: {
-              $sum: {
-                $cond: [{
-                  $in: ["$bookId", bookArr]
-                }, 1, 0]
-              }
-            },
-          }
-        },
-        {
-          $lookup: { //lookup user details from "users" collection
-            from: 'users',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'user'
-          }
-        },
-        {
-          $match: { //only display users that have books from requesting users own book list in their collection
-            matchingBooks: {$gt: 0}
-          }
-        },
-        {
-          $unwind: "$user"
-        },
-      ]).sort({
-        matchingBooks: -1
+    let userInfo = await User.findOne({'_id': req.user._id});
+    let myFriends = userInfo.friends;
+    console.log('my Friends:',myFriends);
+  
+    bookArr = bookList.map((el) => el.bookId)
+    //Query DB for list of users with a count their respective number of matching books
+    
+    let matches =  await BookList.aggregate([{
+        $match: {
+          userId: {$ne: req.user._id} //exclude own user --> disable for testing
+        }
+      },
+      {
+        $group: { //calculate number matching books for each user
+          _id: '$userId',
+          matchingBooks: {
+            $sum: {
+              $cond: [{
+                $in: ["$bookId", bookArr]
+              }, 1, 0]
+            }
+          },
+        }
+      },
+      {
+        $lookup: { //lookup user details from "users" collection
+          from: 'users',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      {
+        $match: { //only display users that have books from requesting users own book list in their collection
+          matchingBooks: {$gt: 0}
+        }
+      },
+      {
+        $unwind: "$user"
+      },
+    ]).sort({
+      matchingBooks: -1
+    });
+
+
+    for(match of matches){
+      let ad = await User.find({
+        '_id':req.user._id,
+        'friends': match._id
       });
-
-
-      for(match of matches){
-        let ad = await User.find({
-          '_id':req.user._id,
-          'friends': match._id
-        });
-        console.log('ad:',ad);
-        
-        if(ad !== null && ad.length > 0){
-          match.user.added = true;
-        } 
-      }
-
-      let filteredMatches =[];
+      console.log('ad:',ad);
       
-      matches.forEach((el) => {
-          // console.log (el)
-          if (userSearch) {
-            if (el.user.username.includes(userSearch)) filteredMatches.push(el);
-          }
-          else {
-            if (el.matchingBooks > 0) filteredMatches.push(el)
-          }
-      });
+      if(ad !== null && ad.length > 0){
+        match.user.added = true;
+      } 
+    }
 
-        console.log('filtered matches',filteredMatches);
-      res.render('matches', {
-              matches: filteredMatches
-            });
+    let filteredMatches =[];
+    
+    matches.forEach((el) => {
+        // console.log (el)
+        if (userSearch) {
+          if (el.user.username.includes(userSearch)) filteredMatches.push(el);
+        }
+        else {
+          if (el.matchingBooks > 0) filteredMatches.push(el)
+        }
+    });
+
+      console.log('filtered matches',filteredMatches);
+    res.render('matches', {
+            matches: filteredMatches
+          });
+    } catch(e){
+      console.log('GET /matches error:', e.message);
+    }
+      
 
       })()
 
@@ -606,50 +626,50 @@ site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
   const action = req.body.action;
   console.log('matches action',action);
   (async () =>{
-    if(action.add){
-      let user = await User.findOne({
-        '_id': req.user._id,
-        // 'friends': req.user._id //Test id 
-        'friends': action.user
-      });
-
-      if(!user || user === null || user === undefined){
-        console.log('Friend not found!');
+    try{
+      if(action.add){
+        let user = await User.findOne({
+          '_id': req.user._id,
+          // 'friends': req.user._id //Test id 
+          'friends': action.user
+        });
+  
+        if(!user || user === null || user === undefined){
+          console.log('Friend not found!');
+          user = await User.findOne({
+            '_id': req.user._id,
+          });
+  
+          user.friends.push(action.user);
+  
+          let updatedFriends = await user.set({
+            friends: user.friends
+          });
+          console.log('You added a Friend! friends:',updatedFriends.friends);
+  
+          updatedFriends.save();
+        } else {
+          console.log('This user is already added to your Friends');
+        }
+  
+      } else if(action.remove){
         user = await User.findOne({
           '_id': req.user._id,
         });
-
-        user.friends.push(action.user);
-
-        let updatedFriends = await user.set({
-          friends: user.friends
-        });
-        console.log('You added a Friend! friends:',updatedFriends.friends);
-
-        updatedFriends.save();
-      } else {
-        console.log('This user is already added to your Friends');
-      }
-
-    } else if(action.remove){
-      user = await User.findOne({
-        '_id': req.user._id,
-      });
-
-      let removed = user.friends.splice(action.user,'');
-
-      let updatedFriends = await user.set({
-        friends: removed
-      });
-
-      console.log('You removed a Friend! friends:',updatedFriends.friends);
-
-      updatedFriends.save();
-    }
   
-    // res.render('matches');
-
-
+        let removed = user.friends.splice(action.user,'');
+  
+        let updatedFriends = await user.set({
+          friends: removed
+        });
+  
+        console.log('You removed a Friend! friends:',updatedFriends.friends);
+  
+        updatedFriends.save();
+      }
+    } catch(e){
+      console.log('POST /matches error:', e.message);
+    }
   })()
   
 })
