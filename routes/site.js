@@ -81,7 +81,7 @@ const getUser = async (req,username) => {
   
 
   let userInfo = {
-    // username : user.username,
+    username : user.username,
     firstname : user.firstName,
     lastname : user.lastName,
     gender : user.gender,
@@ -119,12 +119,7 @@ const getUser = async (req,username) => {
   } catch(e){
     console.log('getUser error:',e.message);
   }
-<<<<<<< HEAD
-  console.log('userInfo.bookArr',userInfo.bookArr);
-  return userInfo;
-=======
   
->>>>>>> 1fc8be9a33d1efe0e5b6b7632489f015d60b5d9b
 }
 
 const createBookList = async (userId, bookId, starred) => {
