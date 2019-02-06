@@ -157,7 +157,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
-      numMatchingBooks:numMatchingBooks
+      numMatchingBooks:user.numMatchingBooks
     });
   })();
 
@@ -185,7 +185,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
-      numMatchingBooks:numMatchingBooks
+      numMatchingBooks:user.numMatchingBooks
     });
   })();
 
