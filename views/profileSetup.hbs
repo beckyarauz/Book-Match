@@ -96,6 +96,14 @@
               </div>
             </div>
             <div class="form-group row">
+              <label for="description" class="col-4 col-form-label">Book Genre</label>
+              
+              <div class="col-8">
+                <input name='tags' class='book-genres-input' placeholder='write some tags' value={{bookGenre}} autofocus data-blacklist='.NET,PHP'>
+                <a class="btn tags--removeAllBtn" >Remove All Tags</a>
+              </div>
+            </div>
+            <div class="form-group row">
               <label for="country" class="col-4 col-form-label">Country</label>
               <div class="col-8">
                 <input id="country" name="usercountry" value="{{usercountry}}" class="form-control here" type="text">

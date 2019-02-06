@@ -98,11 +98,11 @@
               {{/if}}
               <h3>Book Genre:</h3>
               <ul>
-                <li>Dogs</li>
-                <li>Travel</li>
-                <li>Fantasy</li>
-                <li>Sci-Fi</li>
-                <li>War</li>
+                {{#if bookGenre}}
+                {{#each bookGenre}}
+                <li>{{this}}</li>
+                {{/each}}
+                {{/if}}
               </ul>
               <h3>Description:</h3>
               <p>{{description}}</p>

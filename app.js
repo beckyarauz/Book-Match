@@ -41,6 +41,9 @@ const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.
 
 const app = express();
 
+
+
+
 // Middleware Setup
 app.use(logger('dev'));
 app.use(bodyParser.json());
@@ -150,6 +153,7 @@ const auth = require('./routes/auth');
 app.use('/', auth);
 const site = require('./routes/site');
 app.use('/', site);
+
 
 
 
