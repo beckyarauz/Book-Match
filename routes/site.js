@@ -29,21 +29,24 @@ function checkRoles(role) {
 // getUser function gets all the information needed to be rendered on user profiles
 const getUser = async (req,username) => {
   let user;
-
-  ownBookList = await BookList.find({
+  
+  
+  let ownBookList = await BookList.find({
     userId: req.user._id,
   });
 
   ownBookList = ownBookList.map((el) => el.bookId);
-  console.log(ownBookList);
+  console.log('ownbooklist',ownBookList);
   user = await User.findOne({
     username: username
   });
-  booklist = await BookList.find({
-    userId: user._id,
-  }); 
 
-  numMatchingBooks = await BookList.aggregate([
+  // let booklist = await BookList.find({
+  //   userId: user._id,
+  // }); 
+  // console.log(booklist);
+
+  let numMatchingBooks = await BookList.aggregate([
     {
       $match: {
         userId: {$eq: user._id} 
@@ -63,14 +66,16 @@ const getUser = async (req,username) => {
     }
   ])
 
-  numMatchingBooks=numMatchingBooks[0].matchingBooks
+  numMatchingBooks = numMatchingBooks[0].matchingBooks;
   // console.log(numMatchingBooks);
+  
 
   let userInfo = {
     username : user.username,
     firstname : user.firstName,
     lastname : user.lastName,
     gender : user.gender,
+    friends : user.friends,
     userpicture : user.picture,
     usercountry : user.country,
     usercity : user.city,
@@ -79,22 +84,26 @@ const getUser = async (req,username) => {
     userslackID : user.slackID,
     usertwitterID : user.twitterID,
     isProfileOwner : req.params.username == req.user.username,
-    bookList: booklist,
+    bookList: ownBookList,
     bookArr : [],
     favBookArr : [],
     numMatchingBooks: numMatchingBooks
   }
+
+  console.log('userInfo.bookList',userInfo.bookList);
   for (book of userInfo.bookList) {
-    let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+    console.log('a book',book);
+    let url = `https://www.googleapis.com/books/v1/volumes/${book}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
     const response = await fetch(url);
     const json = await response.json();
-
+    console.log('json',json.volumeInfo);
     userInfo.bookArr.push(json.volumeInfo);
 
     if (book.starred) {
       userInfo.favBookArr.push(json.volumeInfo);
     }
   }
+  console.log('userInfo.bookArr',userInfo.bookArr);
   return userInfo;
 }
 
@@ -123,11 +132,16 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let username = req.user.username;
   (async () =>{
     let user = await getUser(req,username);
-  
+    // console.log(user.friends);
+    console.log(user.bookArr);
+    let friendsInfo = await User.find({'_id':{$in:user.friends}});
+
+
     res.render('profile', {
       username:user.username,
       gender:user.gender,
       favbooks: user.favBookArr,
+      friends: friendsInfo,
       books: user.bookArr,
       firstname:user.firstname,
       lastname:user.lastname,
@@ -139,7 +153,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
-      numMatchingBooks:numMatchingBooks
+      numMatchingBooks:user.numMatchingBooks
     });
   })();
 
@@ -152,6 +166,8 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
     let username = req.params.username;
     let user = await getUser(req,username);
     let isOwner = req.user.username === username;
+
+    console.log('userbooks', user.bookArr);
     res.render('profile', {
       username:user.username,
       gender:user.gender,
@@ -167,7 +183,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
-      numMatchingBooks:numMatchingBooks
+      numMatchingBooks:user.numMatchingBooks
     });
   })();
 
