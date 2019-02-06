@@ -74,31 +74,26 @@ const getUser = async (req,username) => {
       }
       console.log('numMatchingBooks',numMatchingBooks);
     }
-  // ])
 
-  numMatchingBooks = numMatchingBooks[0].matchingBooks;
-  // console.log(numMatchingBooks);
-  
-
-  let userInfo = {
-    username : user.username,
-    firstname : user.firstName,
-    lastname : user.lastName,
-    gender : user.gender,
-    friends : user.friends,
-    userpicture : user.picture,
-    usercountry : user.country,
-    usercity : user.city,
-    userfbID : user.fbID,
-    userigID : user.igID,
-    userslackID : user.slackID,
-    usertwitterID : user.twitterID,
-    isProfileOwner : req.params.username == req.user.username,
-    bookList: ownBookList,
-    bookArr : [],
-    favBookArr : [],
-    numMatchingBooks: ''
-  }
+    let userInfo = {
+      username : user.username,
+      firstname : user.firstName,
+      lastname : user.lastName,
+      gender : user.gender,
+      friends: user.friends,
+      userpicture : user.picture,
+      usercountry : user.country,
+      usercity : user.city,
+      userfbID : user.fbID,
+      userigID : user.igID,
+      userslackID : user.slackID,
+      usertwitterID : user.twitterID,
+      isProfileOwner : req.params.username == req.user.username,
+      bookList: booklist,
+      bookArr : [],
+      favBookArr : [],
+      numMatchingBooks: ''
+    }
 
     userInfo.numMatchingBooks = numMatchingBooks != undefined ? numMatchingBooks : '';
 
