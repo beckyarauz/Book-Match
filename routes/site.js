@@ -590,7 +590,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
         '_id':req.user._id,
         'friends': match._id
       });
-      console.log('ad:',ad);
+      // console.log('ad:',ad);
       
       if(ad !== null && ad.length > 0){
         match.user.added = true;
@@ -624,7 +624,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
   const action = req.body.action;
-  console.log('matches action',action);
+  // console.log('matches action',action);
   (async () =>{
     try{
       if(action.add){
