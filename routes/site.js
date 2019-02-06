@@ -29,42 +29,52 @@ function checkRoles(role) {
 // getUser function gets all the information needed to be rendered on user profiles
 const getUser = async (req,username) => {
   let user;
+  try{
+    let ownBookList = await BookList.find({
+      userId: req.user._id,
+    });
   
-  
-  let ownBookList = await BookList.find({
-    userId: req.user._id,
-  });
+    if(ownBookList != null) {
+      ownBookList = ownBookList.map((el) => el.bookId);
+      console.log(ownBookList);
+    }
 
-  ownBookList = ownBookList.map((el) => el.bookId);
-  console.log('ownbooklist',ownBookList);
-  user = await User.findOne({
-    username: username
-  });
+    user = await User.findOne({
+      username: username
+    });
 
-  // let booklist = await BookList.find({
-  //   userId: user._id,
-  // }); 
-  // console.log(booklist);
-
-  let numMatchingBooks = await BookList.aggregate([
-    {
-      $match: {
-        userId: {$eq: user._id} 
-      }
-    },
-    {
-      $group: { //calculate number matching books for each user
-        _id: '$userId',
-        matchingBooks: {
-          $sum: {
-            $cond: [{
-              $in: ["$bookId", ownBookList]
-            }, 1, 0]
+    booklist = await BookList.find({
+      userId: user._id,
+    }); 
+    console.log('booklist',booklist);
+    let numMatchingBooks;
+    if(booklist !== null && booklist !== undefined && booklist.length > 0){
+      numMatchingBooks = await BookList.aggregate([
+        {
+          $match: {
+            userId: {$eq: user._id} 
+          }
+        },
+        {
+          $group: { //calculate number matching books for each user
+            _id: '$userId',
+            matchingBooks: {
+              $sum: {
+                $cond: [{
+                  $in: ["$bookId", ownBookList]
+                }, 1, 0]
+              }
+            }
           }
         }
+      ])
+      console.log('numMatchingBooks',numMatchingBooks);
+      if(numMatchingBooks !== undefined){
+        numMatchingBooks = numMatchingBooks[0].matchingBooks;
       }
+      console.log('numMatchingBooks',numMatchingBooks);
     }
-  ])
+  // ])
 
   numMatchingBooks = numMatchingBooks[0].matchingBooks;
   // console.log(numMatchingBooks);
@@ -87,24 +97,34 @@ const getUser = async (req,username) => {
     bookList: ownBookList,
     bookArr : [],
     favBookArr : [],
-    numMatchingBooks: numMatchingBooks
+    numMatchingBooks: ''
   }
 
-  console.log('userInfo.bookList',userInfo.bookList);
-  for (book of userInfo.bookList) {
-    console.log('a book',book);
-    let url = `https://www.googleapis.com/books/v1/volumes/${book}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
-    const response = await fetch(url);
-    const json = await response.json();
-    console.log('json',json.volumeInfo);
-    userInfo.bookArr.push(json.volumeInfo);
+    userInfo.numMatchingBooks = numMatchingBooks != undefined ? numMatchingBooks : '';
 
-    if (book.starred) {
-      userInfo.favBookArr.push(json.volumeInfo);
+    for (book of userInfo.bookList) {
+      let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+      const response = await fetch(url);
+      const json = await response.json();
+      if(json.error){
+        console.log('json',json.error.message);
+      }
+      userInfo.bookArr.push(json.volumeInfo);
+  
+      if (book.starred) {
+        userInfo.favBookArr.push(json.volumeInfo);
+      }
     }
+    return userInfo;
+  } catch(e){
+    console.log('getUser error:',e.message);
   }
+<<<<<<< HEAD
   console.log('userInfo.bookArr',userInfo.bookArr);
   return userInfo;
+=======
+  
+>>>>>>> 1fc8be9a33d1efe0e5b6b7632489f015d60b5d9b
 }
 
 const createBookList = async (userId, bookId, starred) => {
