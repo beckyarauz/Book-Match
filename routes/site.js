@@ -50,7 +50,7 @@ const getUser = async (req,username) => {
     }); 
   
     if(booklist !== null && booklist !== undefined && booklist.length > 0){
-      numMatchingBooks = await BookList.aggregate([
+      let numMatchingBooks = await BookList.aggregate([
         {
           $match: {
             userId: {$eq: user._id} 
@@ -69,8 +69,11 @@ const getUser = async (req,username) => {
           }
         }
       ])
-    
-      numMatchingBooks = numMatchingBooks[0].matchingBooks;
+      
+      if(numMatchingBooks !== undefined && numMatchingBooks !== null ){
+        numMatchingBooks = numMatchingBooks[0].matchingBooks;
+      }
+      
     }
     
     // console.log(numMatchingBooks);
@@ -91,7 +94,7 @@ const getUser = async (req,username) => {
       bookList: booklist,
       bookArr : [],
       favBookArr : [],
-      numMatchingBooks: numMatchingBooks || undefined
+      numMatchingBooks: numMatchingBooks || 0
     }
     for (book of userInfo.bookList) {
       let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
