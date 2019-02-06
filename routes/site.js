@@ -88,7 +88,9 @@ const getUser = async (req,username) => {
     let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
     const response = await fetch(url);
     const json = await response.json();
-
+    if(json.error){
+      console.log('json',json.error.message);
+    }
     userInfo.bookArr.push(json.volumeInfo);
 
     if (book.starred) {
