@@ -18,6 +18,7 @@ const userSchema = new Schema({
   categories:[String],
   interests:[String],
   friends:[mongoose.Schema.Types.ObjectId],
+  bookGenre:Array,
   fbID: String,
   igID: String,
   slackID: String,

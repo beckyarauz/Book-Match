@@ -8,6 +8,8 @@ const checkGuest = checkRoles('GUEST');
 const checkEditor = checkRoles('EDITOR');
 const checkAdmin = checkRoles('ADMIN');
 
+// var tagify = new Tagify(...)
+
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
@@ -80,6 +82,7 @@ const getUser = async (req,username) => {
       firstname : user.firstName,
       lastname : user.lastName,
       gender : user.gender,
+      bookGenre : user.bookGenre,
       description : user.description,
       languages : user.languages,
       friends: user.friends,
@@ -158,6 +161,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     res.render('profile', {
       username:user.username,
       gender:user.gender,
+      bookGenre:user.bookGenre,
       description:user.description,
       languages:user.languages,
       favbooks: user.favBookArr,
@@ -196,6 +200,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
     res.render('profile', {
       username:user.username,
       gender:user.gender,
+      bookGenre:user.bookGenre,
       description:user.description,
       languages:user.languages,
       favbooks: user.favBookArr,
@@ -225,9 +230,12 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       username: req.user.username
     })
     .then(user => {
+      let tags = user.bookGenre.join();
+
       res.render('profileSetup', {
         username: user.username,
         description: user.description,
+        bookGenre: tags,
         firstname: user.firstName,
         lastname: user.lastName,
         userpicture: user.picture,
@@ -244,75 +252,138 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 });
 
 site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
-  let updatedUser = {
-    username: req.user.username,
-    firstname: req.body.firstName,
-    lastname: req.body.lastName,
-    userpicture: req.body.profilePic,
-    description: req.body.description,
-    country: req.body.usercountry,
-    city: req.body.usercity,
-    fbID: req.body.userfbID,
-    igID: req.body.userigID,
-    slackID: req.body.userslackID,
-    twitterID: req.body.usertwitterID,
-    password: req.body.newpass,
-    gender: req.body.gender
-  };
-  //console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
-  User.findOne({
-      username: updatedUser.username
-    })
-    .then(user => {
-      // console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
-      if (updatedUser.password === "") {
-        updatedUser.password = user.password;
-      } else {
-        let salt = bcrypt.genSaltSync(bcryptSalt);
-        updatedUser.password = bcrypt.hashSync(updatedUser.password, salt);
-      }
+  if(req.body.tags){
+    console.log('Tag was addded!')
+    let tags = req.body.tags;
+    // console.log('tags',tags);
+    let data = JSON.parse(tags);
+    // console.log('type of tags',typeof data);
+    // console.log('data',data);
 
-      let genderResult = {
-        'N': false,
-        'F': false,
-        'M': false
-      };
+    let tagValues = [];
 
-      switch (updatedUser.gender) {
-        case 'F':
-          genderResult['F'] = true;
-          break;
-        case 'M':
-          genderResult['M'] = true;
-          break;
-        case 'N':
-          genderResult['N'] = true;
-          break;
-      }
+    for(el of data){
+      // console.log('element', typeof el,el)
+      tagValues.push(...Object.values(el));
+    }
+    // console.log(tagValues);
 
-      user.set({
-        firstName: updatedUser.firstname,
-        lastName: updatedUser.lastname,
-        picture: updatedUser.userpicture,
-        description: updatedUser.description,
-        country: updatedUser.country,
-        city: updatedUser.city,
-        fbID: updatedUser.fbID,
-        igID: updatedUser.igID,
-        slackID: updatedUser.slackID,
-        twitterID: updatedUser.twitterID,
-        password: updatedUser.password,
-        gender: genderResult
-      });
-      user.save().then(user => {
-          //console.log(user);
-          res.redirect('/profile');
-        })
-        .catch(err => {
-          console.log(err)
+    (async () =>{
+      try{
+        let user = await User.findOne({
+          username: req.user.username
         });
-    })
-    .catch(err => console.log(err));
+
+        user.set({
+          bookGenre: tagValues
+        });
+
+        user.save();
+      }catch(e){
+        console.log('tags handler error on POST /profile-setup:', e.message);
+      }
+    })();
+
+  } else if (req.body.removetags){
+    console.log('Tag was removed!');
+    let tags = req.body.removetags;
+    console.log('tags',tags);
+
+    let tagValues = [];
+
+    for(el of tags){
+      // console.log('element', typeof el,el)
+      tagValues.push(...Object.values(el));
+    }
+    console.log(tagValues);
+
+    (async () =>{
+      try{
+        let user = await User.findOne({
+          username: req.user.username
+        });
+
+        user.set({
+          bookGenre: tagValues
+        });
+
+        user.save();
+      }catch(e){
+        console.log('tags handler error on POST /profile-setup:', e.message);
+      }
+    })();
+  } else {
+    let updatedUser = {
+      username: req.user.username,
+      firstname: req.body.firstName,
+      lastname: req.body.lastName,
+      userpicture: req.body.profilePic,
+      description: req.body.description,
+      country: req.body.usercountry,
+      city: req.body.usercity,
+      fbID: req.body.userfbID,
+      igID: req.body.userigID,
+      slackID: req.body.userslackID,
+      twitterID: req.body.usertwitterID,
+      password: req.body.newpass,
+      gender: req.body.gender
+    };
+    //console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
+    User.findOne({
+        username: updatedUser.username
+      })
+      .then(user => {
+        // console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
+        if (updatedUser.password === "") {
+          updatedUser.password = user.password;
+        } else {
+          let salt = bcrypt.genSaltSync(bcryptSalt);
+          updatedUser.password = bcrypt.hashSync(updatedUser.password, salt);
+        }
+  
+        let genderResult = {
+          'N': false,
+          'F': false,
+          'M': false
+        };
+  
+        switch (updatedUser.gender) {
+          case 'F':
+            genderResult['F'] = true;
+            break;
+          case 'M':
+            genderResult['M'] = true;
+            break;
+          case 'N':
+            genderResult['N'] = true;
+            break;
+        }
+  
+        user.set({
+          firstName: updatedUser.firstname,
+          lastName: updatedUser.lastname,
+          picture: updatedUser.userpicture,
+          description: updatedUser.description,
+          country: updatedUser.country,
+          city: updatedUser.city,
+          fbID: updatedUser.fbID,
+          igID: updatedUser.igID,
+          slackID: updatedUser.slackID,
+          twitterID: updatedUser.twitterID,
+          password: updatedUser.password,
+          gender: genderResult
+        });
+        user.save().then(user => {
+            //console.log(user);
+            res.redirect('/profile');
+          })
+          .catch(err => {
+            console.log(err)
+          });
+      })
+      .catch(err => console.log(err));
+  }
+  
 
 });
 
