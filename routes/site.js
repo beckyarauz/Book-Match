@@ -81,7 +81,7 @@ const getUser = async (req,username) => {
   
 
   let userInfo = {
-    username : user.username,
+    // username : user.username,
     firstname : user.firstName,
     lastname : user.lastName,
     gender : user.gender,
