@@ -30,9 +30,7 @@ function checkRoles(role) {
 const getUser = async (req,username) => {
   let user;
   try{
-
-
-    ownBookList = await BookList.find({
+    let ownBookList = await BookList.find({
       userId: req.user._id,
     });
   
@@ -48,9 +46,10 @@ const getUser = async (req,username) => {
     booklist = await BookList.find({
       userId: user._id,
     }); 
-  
+    console.log('booklist',booklist);
+    let numMatchingBooks;
     if(booklist !== null && booklist !== undefined && booklist.length > 0){
-      let numMatchingBooks = await BookList.aggregate([
+      numMatchingBooks = await BookList.aggregate([
         {
           $match: {
             userId: {$eq: user._id} 
@@ -69,15 +68,13 @@ const getUser = async (req,username) => {
           }
         }
       ])
-      
-      if(numMatchingBooks !== undefined && numMatchingBooks !== null ){
+      console.log('numMatchingBooks',numMatchingBooks);
+      if(numMatchingBooks !== undefined){
         numMatchingBooks = numMatchingBooks[0].matchingBooks;
       }
-      
+      console.log('numMatchingBooks',numMatchingBooks);
     }
-    
-    // console.log(numMatchingBooks);
-  
+
     let userInfo = {
       username : user.username,
       firstname : user.firstName,
@@ -94,8 +91,11 @@ const getUser = async (req,username) => {
       bookList: booklist,
       bookArr : [],
       favBookArr : [],
-      numMatchingBooks: numMatchingBooks || 0
+      numMatchingBooks: ''
     }
+
+    userInfo.numMatchingBooks = numMatchingBooks != undefined ? numMatchingBooks : '';
+
     for (book of userInfo.bookList) {
       let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
       const response = await fetch(url);
@@ -111,7 +111,7 @@ const getUser = async (req,username) => {
     }
     return userInfo;
   } catch(e){
-    console.log(e.message);
+    console.log('getUser error:',e.message);
   }
   
 }
