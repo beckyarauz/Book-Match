@@ -29,75 +29,91 @@ function checkRoles(role) {
 // getUser function gets all the information needed to be rendered on user profiles
 const getUser = async (req,username) => {
   let user;
+  try{
+    let ownBookList = await BookList.find({
+      userId: req.user._id,
+    });
+  
+    if(ownBookList != null) {
+      ownBookList = ownBookList.map((el) => el.bookId);
+      console.log(ownBookList);
+    }
 
-  ownBookList = await BookList.find({
-    userId: req.user._id,
-  });
+    user = await User.findOne({
+      username: username
+    });
 
-  ownBookList = ownBookList.map((el) => el.bookId);
-  console.log(ownBookList);
-  user = await User.findOne({
-    username: username
-  });
-  booklist = await BookList.find({
-    userId: user._id,
-  }); 
-
-  numMatchingBooks = await BookList.aggregate([
-    {
-      $match: {
-        userId: {$eq: user._id} 
-      }
-    },
-    {
-      $group: { //calculate number matching books for each user
-        _id: '$userId',
-        matchingBooks: {
-          $sum: {
-            $cond: [{
-              $in: ["$bookId", ownBookList]
-            }, 1, 0]
+    booklist = await BookList.find({
+      userId: user._id,
+    }); 
+    console.log('booklist',booklist);
+    let numMatchingBooks;
+    if(booklist !== null && booklist !== undefined && booklist.length > 0){
+      numMatchingBooks = await BookList.aggregate([
+        {
+          $match: {
+            userId: {$eq: user._id} 
+          }
+        },
+        {
+          $group: { //calculate number matching books for each user
+            _id: '$userId',
+            matchingBooks: {
+              $sum: {
+                $cond: [{
+                  $in: ["$bookId", ownBookList]
+                }, 1, 0]
+              }
+            }
           }
         }
+      ])
+      console.log('numMatchingBooks',numMatchingBooks);
+      if(numMatchingBooks !== undefined){
+        numMatchingBooks = numMatchingBooks[0].matchingBooks;
+      }
+      console.log('numMatchingBooks',numMatchingBooks);
+    }
+
+    let userInfo = {
+      username : user.username,
+      firstname : user.firstName,
+      lastname : user.lastName,
+      gender : user.gender,
+      userpicture : user.picture,
+      usercountry : user.country,
+      usercity : user.city,
+      userfbID : user.fbID,
+      userigID : user.igID,
+      userslackID : user.slackID,
+      usertwitterID : user.twitterID,
+      isProfileOwner : req.params.username == req.user.username,
+      bookList: booklist,
+      bookArr : [],
+      favBookArr : [],
+      numMatchingBooks: ''
+    }
+
+    userInfo.numMatchingBooks = numMatchingBooks != undefined ? numMatchingBooks : '';
+
+    for (book of userInfo.bookList) {
+      let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
+      const response = await fetch(url);
+      const json = await response.json();
+      if(json.error){
+        console.log('json',json.error.message);
+      }
+      userInfo.bookArr.push(json.volumeInfo);
+  
+      if (book.starred) {
+        userInfo.favBookArr.push(json.volumeInfo);
       }
     }
-  ])
-
-  numMatchingBooks=numMatchingBooks[0].matchingBooks
-  // console.log(numMatchingBooks);
-
-  let userInfo = {
-    username : user.username,
-    firstname : user.firstName,
-    lastname : user.lastName,
-    gender : user.gender,
-    userpicture : user.picture,
-    usercountry : user.country,
-    usercity : user.city,
-    userfbID : user.fbID,
-    userigID : user.igID,
-    userslackID : user.slackID,
-    usertwitterID : user.twitterID,
-    isProfileOwner : req.params.username == req.user.username,
-    bookList: booklist,
-    bookArr : [],
-    favBookArr : [],
-    numMatchingBooks: numMatchingBooks
+    return userInfo;
+  } catch(e){
+    console.log('getUser error:',e.message);
   }
-  for (book of userInfo.bookList) {
-    let url = `https://www.googleapis.com/books/v1/volumes/${book.bookId}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
-    const response = await fetch(url);
-    const json = await response.json();
-    if(json.error){
-      console.log('json',json.error.message);
-    }
-    userInfo.bookArr.push(json.volumeInfo);
-
-    if (book.starred) {
-      userInfo.favBookArr.push(json.volumeInfo);
-    }
-  }
-  return userInfo;
+  
 }
 
 const createBookList = async (userId, bookId, starred) => {
@@ -141,7 +157,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
-      numMatchingBooks:numMatchingBooks
+      numMatchingBooks:user.numMatchingBooks
     });
   })();
 
@@ -169,7 +185,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
       userslackID:user.userslackID,
       usertwitterID:user.usertwitterID,
       isProfileOwner:isOwner,
-      numMatchingBooks:numMatchingBooks
+      numMatchingBooks:user.numMatchingBooks
     });
   })();
 
