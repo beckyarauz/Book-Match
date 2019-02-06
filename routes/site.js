@@ -80,6 +80,7 @@ const getUser = async (req,username) => {
       firstname : user.firstName,
       lastname : user.lastName,
       gender : user.gender,
+      friends: user.friends,
       userpicture : user.picture,
       usercountry : user.country,
       usercity : user.city,
@@ -141,11 +142,16 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   let username = req.user.username;
   (async () =>{
     let user = await getUser(req,username);
-  
+    // console.log(user.friends);
+    console.log(user.bookArr);
+    let friendsInfo = await User.find({'_id':{$in:user.friends}});
+
+
     res.render('profile', {
       username:user.username,
       gender:user.gender,
       favbooks: user.favBookArr,
+      friends: friendsInfo,
       books: user.bookArr,
       firstname:user.firstname,
       lastname:user.lastname,
@@ -170,6 +176,8 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
     let username = req.params.username;
     let user = await getUser(req,username);
     let isOwner = req.user.username === username;
+
+    console.log('userbooks', user.bookArr);
     res.render('profile', {
       username:user.username,
       gender:user.gender,
