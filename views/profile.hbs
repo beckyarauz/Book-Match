@@ -65,7 +65,6 @@
               {{#if isProfileOwner}}
               <li class="nav-item">
                 <a class="nav-link" href="/profile-setup/">
-                  {{!-- role="tab" data-toggle="tab"> --}}
                   <i class="material-icons">account_box</i>Edit<br>Profile
                 </a>
               </li>
@@ -80,15 +79,23 @@
         </div>
       </div>
       <div class="tab-content tab-space flex">
-        <div class="tab-pane active text-center gallery" id="aboutme">
+        <div class="tab-pane active text-center" id="aboutme">
           <div class="row">
-            <div class="col-md-3 ml-auto">
-              <img src="/assets/img/examples/studio-1.jpg" class="rounded">
-              <img src="/assets/img/examples/studio-2.jpg" class="rounded">
-            </div>
-            <div class="col-md-3 mr-auto">
-              <img src="/assets/img/examples/studio-5.jpg" class="rounded">
-              <img src="/assets/img/examples/studio-4.jpg" class="rounded">
+            <div class="col-12">
+              <h3>Country:</h3>
+              <p>{{usercountry}}</p>
+              <h3>Languages:</h3>
+              <p>English, Spanish</p>
+              <h3>Book Genre:</h3>
+              <ul>
+                <li>Dogs</li>
+                <li>Travel</li>
+                <li>Fantasy</li>
+                <li>Sci-Fi</li>
+                <li>War</li>
+              </ul>
+              <h3>Description:</h3>
+              <p>{{description}}</p>
             </div>
           </div>
         </div>

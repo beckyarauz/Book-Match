@@ -80,6 +80,7 @@ const getUser = async (req,username) => {
       firstname : user.firstName,
       lastname : user.lastName,
       gender : user.gender,
+      description : user.description,
       friends: user.friends,
       userpicture : user.picture,
       usercountry : user.country,
@@ -156,6 +157,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     res.render('profile', {
       username:user.username,
       gender:user.gender,
+      description:user.description,
       favbooks: user.favBookArr,
       friends: friendsInfo,
       books: user.bookArr,
@@ -192,6 +194,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
     res.render('profile', {
       username:user.username,
       gender:user.gender,
+      description:user.description,
       favbooks: user.favBookArr,
       books: user.bookArr,
       firstname:user.firstname,
@@ -221,6 +224,7 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     .then(user => {
       res.render('profileSetup', {
         username: user.username,
+        description: user.description,
         firstname: user.firstName,
         lastname: user.lastName,
         userpicture: user.picture,
