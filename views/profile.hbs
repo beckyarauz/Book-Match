@@ -67,13 +67,13 @@
               </li>
               {{#if isProfileOwner}}
               <li class="nav-item">
-                <a class="nav-link" href="/profile-setup/">
-                  <i class="material-icons">account_box</i>Edit<br>Profile
+                <a class="nav-link" href="#friends" role="tab" data-toggle="tab">
+                  <i class="fas fa-user-friends"></i> Friends
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link" href="#friends" role="tab" data-toggle="tab">
-                  <i class="fas fa-user-friends"></i> Friends
+                <a class="nav-link" href="/profile-setup/">
+                  <i class="material-icons">account_box</i>Edit<br>Profile
                 </a>
               </li>
               {{/if}}
@@ -87,13 +87,13 @@
             <div class="col-12">
               <h3>Country:</h3>
               <p>{{usercountry}}</p>
-              
+
               {{#if languages}}
               <h3>Languages:</h3>
               <ul>
-              {{#each languages}}
-              <li>{{this}}</li>
-              {{/each}}
+                {{#each languages}}
+                <li>{{this}}</li>
+                {{/each}}
               </ul>
               {{/if}}
               <h3>Book Genre:</h3>
@@ -113,9 +113,32 @@
           <div class="row wrap my-books" id="read-books">
             {{#if books}}
             {{#each books}}
-            <div>
-              <img src={{this.imageLinks.thumbnail}} alt="image" class="rounded">
+            <div class="card card-book" style="width: 10rem;">
+              <a href="/book/{{this.id}}">
+                <img class="card-img-top" src={{this.imageLinks.thumbnail}} alt="Card image cap">
+              </a>
+              <div class="card-body card-body-book">
+                <div class="card-book-text-container">
+                  <h4 class="card-text card-book-text">{{this.title}}</h4>
+                </div>
+                  <input type="text" name="starred" class="hidden" id="book-input">
+                  {{#if ../isProfileOwner}}
+                  <div class="book-icons" id={{this.id}}>
+                    {{#if this.starred}}
+                    <i class="fas fa-star star-book clicked" data-toggle="tooltip" title="Remove Book of Favorites" id="star-book"></i>
+                    {{else}}
+                    <i class="fas fa-star star-book" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i>
+                    {{/if}}
+                    {{#if this.added}}
+                    <i class="fas fa-minus add-book clicked" data-toggle="tooltip" title="Remove Book of Read Books"></i>
+                    {{else}}
+                    <i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books"></i>
+                    {{/if}}
+                  </div>
+                  {{/if}}
+              </div>
             </div>
+
             {{/each}}
             {{/if}}
           </div>
@@ -149,7 +172,7 @@
             {{#if this.gender.F}}
             <div class="friend-info" width="150px" height="150px">
               <a href="/profile/{{this.username}}">
-                <img src="/images/woman-avatar.png" alt="Circle Image" width="150px" height="150px" id={{this._id}}>
+                <img src="/images/woman-avatar.png" alt="Circle Image" class="avatar" width="150px" height="150px" id={{this._id}}>
               </a>
               <div>
                 <p>{{this.username}}</p>
@@ -160,7 +183,7 @@
             {{#if this.gender.M}}
             <div class="friend-info" width="150px" height="150px">
               <a href="/profile/{{this.username}}">
-                <img src="/images/man-avatar.png" alt="Circle Image" width="150px" height="150px" id={{this._id}}>
+                <img src="/images/man-avatar.png" alt="Circle Image" class="avatar" width="150px" height="150px" id={{this._id}}>
               </a>
               <div>
                 <p>{{this.username}}</p>
@@ -170,7 +193,7 @@
             {{#if this.gender.N}}
             <div class="friend-info" width="150px" height="150px">
               <a href="/profile/{{this.username}}">
-                <img src="/images/neutral-avatar.png" alt="Circle Image" width="150px" height="150px" id={{this._id}}>
+                <img src="/images/neutral-avatar.png" alt="Circle Image" class="avatar" width="150px" height="150px" id={{this._id}}>
               </a>
 
               <div>
