@@ -396,7 +396,7 @@ site.get('/admin', checkAdmin, (req, res) => {
   });
 });
 
-site.get('/search', (req, res, next) => {
+site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   if (req.query.book != undefined) {
     const list = req.query.book.split(' ').join('+');
     const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
@@ -451,6 +451,7 @@ site.get('/search', (req, res, next) => {
             });
 
             res.render('search', {
+              layout:'private-layout',
               bookInfo
             });
           })
@@ -466,13 +467,16 @@ site.get('/search', (req, res, next) => {
             }
           });
           res.render('search', {
+            layout:'private-layout',
             bookInfo
           });
         }
       }
     })
   } else {
-    res.render('search');
+    res.render('search', {
+      layout:'private-layout',
+    });
   }
 });
 
