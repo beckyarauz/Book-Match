@@ -112,11 +112,13 @@ const getUser = async (req,username) => {
 
       volumeInfo.starred = book.starred;
       volumeInfo.added = true;
+      volumeInfo.id = book.bookId;
+
 
       userInfo.bookArr.push(volumeInfo);
       // //bookList are just ids
       // let dbBook = await BookList.findOne({bookId: book});
-      // console.log('volume Info:',volumeInfo);
+      console.log('volume Info:',volumeInfo);
   
       if (book.starred) {
         userInfo.favBookArr.push(volumeInfo);
@@ -491,7 +493,8 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-
+  console.log('POST in /search')
+  console.log('action',action);
   if (action.star || action.add) {
     BookList.findOne({
         'userId': req.user._id,
