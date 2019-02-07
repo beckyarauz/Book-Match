@@ -98,52 +98,77 @@
             </aside>
         </div>
     </div> --}}
-    <div id="inbox-header" class=" container row">
-        <div class="col-sm-6"><div class="inbox-head">
-                    <h3>Inbox</h3>
-                </div></div>
-        <div class="col-sm-6">
-            <a href="#myModal" data-toggle="modal" title="Compose" class="btn btn-compose">
-                        Compose
-                    </a>
-        </div>
-        
-                    <!-- Modal -->
-                    <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal"
-                        class="modal fade" style="display: none;">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
-                                </div>
-                                <div class="modal-body">
-                                    <form role="form" class="form-horizontal">
-                                        <div class="form-group">
-                                            <label class="col-lg-2 control-label">To</label>
-                                            <div class="col-lg-10">
-                                                <input type="text" placeholder="" id="inputEmail1" class="form-control">
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label class="col-lg-2 control-label">Message</label>
-                                            <div class="col-lg-10">
-                                                <textarea rows="10" cols="30" class="form-control" id="" name=""></textarea>
-                                            </div>
-                                        </div>
-                                        <div class="form-group">
-                                            <div class="col-lg-offset-2 col-lg-10">
-                                                <button class="btn btn-send" type="submit">Send</button>
-                                            </div>
-                                        </div>
-                                    </form>
-                                </div>
-                            </div><!-- /.modal-content -->
-                        </div><!-- /.modal-dialog -->
+    <div id="inbox-header" class="row inbox-head">
+        <h3>Inbox</h3>
+        <a href="#myModal" data-toggle="modal" title="Compose" class="btn btn-compose">
+            Compose
+        </a>
+        <!-- Modal -->
+        <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModal" class="modal fade"
+            style="display: none;">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button aria-hidden="true" data-dismiss="modal" class="close" type="button">×</button>
                     </div>
-                    <!-- /.modal -->
+                    <div class="modal-body">
+                        <form role="form" class="form-horizontal">
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">To</label>
+                                <div class="col-lg-10">
+                                    <input type="text" placeholder="username" id="inputUserName" name="username" class="form-control">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-lg-2 control-label">Message</label>
+                                <div class="col-lg-10">
+                                    <textarea rows="10" cols="30" class="form-control" id="message-body" name="message"></textarea>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="col-lg-offset-2 col-lg-10">
+                                    <A class="btn btn-send" id="send-message" data-dismiss="modal">Send</A>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div><!-- /.modal-content -->
+            </div><!-- /.modal-dialog -->
+        </div>
+        <!-- /.modal -->
     </div>
-    <div id="inbox-body" class="container row">
-            <div class="col-sm-3">username</div>
-            <div class="col-sm-9"> message</div>
+    <div id="inbox-body" class="row">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Username</th>
+                    <th scope="col">Message</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{#if messages}}
+
+                {{#each messages}}
+                <tr>
+                    <th scope="row"></th>
+                    <td>{{this.from}}</td>
+                    <td>{{this.message}}</td>
+                </tr>
+
+                {{/each}}
+
+                {{else}}
+
+                {{#if error}}
+                <div class="no-message">
+                    <h1>{{error}}</h1>
+                </div>
+                {{/if}}
+
+                {{/if}}
+            </tbody>
+        </table>
+
     </div>
 </div>

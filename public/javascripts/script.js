@@ -190,11 +190,29 @@ document.addEventListener('DOMContentLoaded', () => {
   $('.add-friend').click(function (e) {
     const userId = $(this).parent().attr('id');
     const that = $(this);
-    // addFriend(userId,that);
-    // removeFriend(userId,that);
     $(this).attr('id') === 'remove-friend' ? removeFriend(userId, that) : addFriend(userId, that);
   });
 
 
+  //MESSAGES
+
+  if($('#send-message')){
+    console.log('inbox!');
+    $('#send-message').click(function (e){
+      console.log('sending a message!');
+      const to = $('#inputUserName').val();
+      const message = $('#message-body').val();
+      console.log('to:',to);
+      console.log('message:',message);
+      axios.post('/inbox', {
+        action: {
+          send: true,
+          to: to,
+          message: message
+        }
+      });
+  
+    })
+  }
 
 }, false);

@@ -25,6 +25,10 @@ a {
   color: #00B7FF;
 }
 
+.table{
+  overflow: scroll;
+}
+
 // .profile-page .page-header {
 //   height: 50vh !important;
 //   background-position: top center;
@@ -117,7 +121,7 @@ button.bg-book-dark:focus {
 }
 
 .body-container{
-  margin-top: 20vh;
+  margin-top: 15vh;
 }
 //home
 .btn-home{
@@ -993,7 +997,7 @@ margin:20px;
 
 #inbox-container{
   // flex-direction: column;
-  height: 60vh;
+  // height: 60vh;
 }
 
 

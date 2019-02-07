@@ -750,8 +750,76 @@ site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
   
 })
 
-site.get('/inbox'/*,ensureLogin.ensureLoggedIn('/login')*/, (req, res, next) =>{
-  res.render('inbox');
+site.get('/inbox',ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
+  const user = req.user;
+
+  (async ()=> {
+    try{
+      let messages = await Message.find({to: user.username});
+
+      if(messages == null){
+        console.log('no messages found for user:', user.username);
+        res.render("inbox", {
+          error: "You have no messages :("
+        });
+        return;
+      } else {
+        res.render("inbox", {messages});
+      }
+
+    } catch(e){
+      console.log('Error on GET /inbox', e.message);
+    }
+  })();
+})
+site.post('/inbox',ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
+  let to,from,message;
+  (async () => {
+    try{
+      console.log('/INBOX POST!');
+      if(req.body.action.send){
+        console.log('if action.send');
+        if(req.body.action.to){
+          console.log('if action.to');
+          from = req.user.username;
+          message = req.body.action.message;
+
+          to = req.body.action.to;
+
+          let toUser = await User.findOne({'username': to});
+          console.log('to:', toUser);
+
+          if(toUser === null){
+            console.log('User not found');
+            throw new Error(`User not found: The user you want to send the message to doesn't exist`);
+          }
+          if(message === null){
+            console.log(`You didn't write anything on the message`);
+            throw new Error(`Empty Message: write a message to send`);
+          }
+
+          let sendMessage = await new Message({
+            to: to,
+            message: message,
+            from: from,
+            senderId: req.user._id,
+            receiverId: toUser._id
+          })
+
+          console.log(sendMessage);
+
+          sendMessage.save();
+
+        } else {
+          throw new Error('No username','Please put a username to send your message');
+        }
+      }
+    } catch(e){
+      console.log('Error on POST /inbox:',e.message)
+    }
+  })()
+
+  // res.render('inbox');
 })
 
 
