@@ -108,12 +108,22 @@ const getUser = async (req,username) => {
       if(json.error){
         console.log('json',json.error.message);
       }
-      userInfo.bookArr.push(json.volumeInfo);
+      let volumeInfo = json.volumeInfo;
+
+      volumeInfo.starred = book.starred;
+      volumeInfo.added = true;
+
+      userInfo.bookArr.push(volumeInfo);
+      // //bookList are just ids
+      // let dbBook = await BookList.findOne({bookId: book});
+      // console.log('volume Info:',volumeInfo);
   
       if (book.starred) {
-        userInfo.favBookArr.push(json.volumeInfo);
+        userInfo.favBookArr.push(volumeInfo);
       }
     }
+    
+
     return userInfo;
   } catch(e){
     console.log('getUser error:',e.message);
@@ -155,7 +165,6 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
     // console.log(user.friends);
     console.log(user.bookArr);
     let friendsInfo = await User.find({'_id':{$in:user.friends}});
-
 
     res.render('profile', {
       layout:'private-layout',

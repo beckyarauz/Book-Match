@@ -113,9 +113,38 @@
           <div class="row wrap my-books" id="read-books">
             {{#if books}}
             {{#each books}}
-            <div>
-              <img src={{this.imageLinks.thumbnail}} alt="image" class="rounded">
-            </div>
+    <div class="card card-book" style="width: 10rem;" >
+      <a href="/book/{{this.id}}">
+        <img class="card-img-top" src={{this.imageLinks.thumbnail}} alt="Card image cap">
+      </a>
+      <div class="card-body card-body-book">
+        <div class="card-book-text-container">
+          <h4 class="card-text card-book-text">{{this.title}}</h4>
+          <h6 class="card-text card-book-text">{{this.subtitle}}</h6>
+        </div>
+        {{!-- <form action="/search" method="GET" id="testForm"> --}}
+        <input type="text" name="starred" class="hidden" id="book-input">
+        <div class="book-icons" id={{this.id}}>
+          {{#if this.starred}}
+            <i class="fas fa-star star-book clicked" data-toggle="tooltip" title="Remove Book of Favorites" id="star-book"></i>
+          {{else}}
+            <i class="fas fa-star star-book" data-toggle="tooltip" title="Add Book to Favorites" id="star-book"></i></i>
+          {{/if}}
+          {{#if this.added}}
+            <i class="fas fa-plus add-book clicked" data-toggle="tooltip" title="Remove Book of Read Books" ></i>
+          {{else}}
+            <i class="fas fa-plus add-book" data-toggle="tooltip" title="Add Book to Read Books" ></i>
+          {{/if}}
+        </div>
+
+
+        {{!-- </form> --}}
+      
+      </div>
+    </div>
+
+
+
             {{/each}}
             {{/if}}
           </div>
