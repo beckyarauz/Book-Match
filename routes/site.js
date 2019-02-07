@@ -14,6 +14,7 @@ const bcryptSalt = 10;
 const User = require('../models/user');
 const Book = require('../models/book');
 const BookList = require('../models/bookList');
+const Message = require('../models/message');
 
 
 function checkRoles(role) {
@@ -385,7 +386,6 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
 
 });
 
-
 site.get('/admin', checkAdmin, (req, res) => {
   res.render('admin', {
     user: req.user
@@ -749,5 +749,11 @@ site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
   })()
   
 })
+
+site.get('/inbox'/*,ensureLogin.ensureLoggedIn('/login')*/, (req, res, next) =>{
+  res.render('inbox');
+})
+
+
 
 module.exports = site;
