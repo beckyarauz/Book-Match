@@ -65,7 +65,7 @@ router.post("/signup"/*, recaptcha.middleware.verify*/, (req, res, next) => {
     .then(user => {
       if (user !== null) {
         res.render("auth/signup", {
-          message: "The username already exists!"
+          error: "The username already exists!"
         });
         return;
       }
