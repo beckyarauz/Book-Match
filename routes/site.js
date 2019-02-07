@@ -158,6 +158,7 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 
 
     res.render('profile', {
+      layout:'private-layout',
       username:user.username,
       gender:user.gender,
       bookGenre:user.bookGenre,
@@ -197,6 +198,7 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
 
     // console.log('userbooks', user.bookArr);
     res.render('profile', {
+      layout:'private-layout',
       username:user.username,
       gender:user.gender,
       bookGenre:user.bookGenre,
@@ -232,6 +234,7 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       let tags = user.bookGenre.join();
 
       res.render('profileSetup', {
+        layout:'private-layout',
         username: user.username,
         description: user.description,
         bookGenre: tags,
@@ -388,6 +391,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
 
 site.get('/admin', checkAdmin, (req, res) => {
   res.render('admin', {
+    layout:'private-layout',
     user: req.user
   });
 });
@@ -687,6 +691,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
       console.log('filtered matches',filteredMatches);
     res.render('matches', {
+            layout:'private-layout',
             matches: filteredMatches
           });
     } catch(e){
@@ -760,11 +765,14 @@ site.get('/inbox',ensureLogin.ensureLoggedIn('/login'), (req, res, next) =>{
       if(messages == null){
         console.log('no messages found for user:', user.username);
         res.render("inbox", {
+          layout:'private-layout',
           error: "You have no messages :("
         });
         return;
       } else {
-        res.render("inbox", {messages});
+        res.render("inbox", {
+          layout:'private-layout',
+          messages});
       }
 
     } catch(e){
