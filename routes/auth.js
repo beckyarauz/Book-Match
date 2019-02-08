@@ -23,7 +23,7 @@ var zxcvbn = require('zxcvbn');
 /* GET home page */
 
 router.get('/signup',(req, res, next) => {
-  console.log(req.user);
+  // console.log(req.user);
   if(req.user === undefined){
     res.render('auth/signup');
   } else {
@@ -33,7 +33,7 @@ router.get('/signup',(req, res, next) => {
 
 
 router.get('/login', (req, res, next) => {
-  console.log(req.user);
+  // console.log(req.user);
   if(req.user === undefined){
     res.render('auth/login', { message: req.flash('error') });
   } else {

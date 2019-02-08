@@ -49,7 +49,7 @@ const getUser = async (req, username) => {
 
     if (ownBookList != null) {
       ownBookList = ownBookList.map((el) => el.bookId);
-      console.log(ownBookList);
+      // console.log(ownBookList);
     }
 
     user = await User.findOne({
@@ -131,7 +131,7 @@ const getUser = async (req, username) => {
       userInfo.bookArr.push(volumeInfo);
       // //bookList are just ids
       // let dbBook = await BookList.findOne({bookId: book});
-      console.log('volume Info:', volumeInfo);
+      // console.log('volume Info:', volumeInfo);
 
       if (book.starred) {
         userInfo.favBookArr.push(volumeInfo);
@@ -165,7 +165,6 @@ const createBookList = async (userId, bookId, starred) => {
 
 site.get('/', cacheMiddleware(30), (req, res, next) => {
   if(req.user !== null && req.user !== undefined){
-    console.log(req.user);
     if (req.user.role !== 'ADMIN') {
       res.redirect('/home');
     } else {
@@ -198,8 +197,6 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   (async () => {
     try {
       let user = await getUser(req, username);
-      // console.log(user.friends);
-      console.log(user.bookArr);
       let friendsInfo = await User.find({
         '_id': {
           $in: user.friends
@@ -305,18 +302,13 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
   if (req.body.tags) {
     console.log('Tag was addded!')
     let tags = req.body.tags;
-    // console.log('tags',tags);
     let data = JSON.parse(tags);
-    // console.log('type of tags',typeof data);
-    // console.log('data',data);
 
     let tagValues = [];
 
     for (el of data) {
-      // console.log('element', typeof el,el)
       tagValues.push(...Object.values(el));
     }
-    // console.log(tagValues);
 
     (async () => {
       try {
@@ -342,10 +334,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     let tagValues = [];
 
     for (el of tags) {
-      // console.log('element', typeof el,el)
       tagValues.push(...Object.values(el));
     }
-    console.log(tagValues);
 
     (async () => {
       try {
@@ -462,7 +452,6 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             .then(books => {
               let starredBooks = books.filter(book => book.starred);
               let booksDB = books;
-              // console.log('ITEMS:',items);
 
               bookInfo = items.map(item => {
                 return {
@@ -471,18 +460,14 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                   'title': item.volumeInfo.title,
                   'subtitle': item.volumeInfo.subtitle,
                   'added': (() => {
-                    // for(book of starredBooks){
                     for (let i = 0; i < booksDB.length; i++) {
-                      // console.log(`comparing ${item.id} and ${book.bookId}`);
                       if (item.id === booksDB[i].bookId) {
                         return true;
                       }
                     }
                   })(),
                   'starred': (() => {
-                    // for(book of starredBooks){
                     for (let i = 0; i < starredBooks.length; i++) {
-                      // console.log(`comparing ${item.id} and ${book.bookId}`);
                       if (item.id === starredBooks[i].bookId) {
                         return true;
                       }
@@ -499,7 +484,6 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             .catch(e => console.log(e.message));
         } else {
           bookInfo = items.map(item => {
-            // console.log(item.volumeInfo.imageLinks);
             return {
               'id': item.id,
               'image': item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : 'images/book_404.png',
@@ -523,8 +507,6 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-  console.log('POST in /search')
-  console.log('action', action);
   if (action.star || action.add) {
     BookList.findOne({
         'userId': req.user._id,
@@ -637,17 +619,11 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 });
 
 site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, next) => {
-  //const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
-  // console.log(req.params.bookID);
   const url = `https://www.googleapis.com/books/v1/volumes/${req.params.bookID}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
   let items;
   request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       let info = JSON.parse(body);
-      //console.log(info)
-      //items = info.items.map(item => item);
-      //console.log(items);
-      //res.send(info);
       res.render('./public/book-detail', {
         book: info
       })
@@ -659,10 +635,7 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
 })
 
 site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
-  //console.log("matches!");
-  //Query DB for list of own read books
   let userSearch = req.query.username;
-  // console.log("Search for user: "+userSearch);
 
   (async () => {
     try {
@@ -726,7 +699,6 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
           '_id': req.user._id,
           'friends': match._id
         });
-        // console.log('ad:',ad);
 
         if (ad !== null && ad.length > 0) {
           match.user.added = true;
@@ -736,15 +708,12 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       let filteredMatches = [];
 
       matches.forEach((el) => {
-        // console.log (el)
         if (userSearch) {
           if (el.user.username.includes(userSearch)) filteredMatches.push(el);
         } else {
           if (el.matchingBooks > 0) filteredMatches.push(el)
         }
       });
-
-      console.log('filtered matches', filteredMatches);
       res.render('matches', {
         layout: 'private-layout',
         matches: filteredMatches
@@ -760,13 +729,11 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-  // console.log('matches action',action);
   (async () => {
     try {
       if (action.add) {
         let user = await User.findOne({
           '_id': req.user._id,
-          // 'friends': req.user._id //Test id 
           'friends': action.user
         });
 
@@ -842,11 +809,8 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   let to, from, message;
   (async () => {
     try {
-      // console.log('/INBOX POST!');
       if (req.body.action.send) {
-        // console.log('if action.send');
         if (req.body.action.to) {
-          // console.log('if action.to');
           from = req.user.username;
           message = req.body.action.message;
 
@@ -855,7 +819,6 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
           let toUser = await User.findOne({
             'username': to
           });
-          // console.log('to:', toUser);
 
           if (toUser === null) {
             console.log('User not found');
