@@ -433,9 +433,15 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
       })
       .catch(err => console.log(err));
   }
-
-
 });
+
+site.get('/deleteProfile', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
+  User.deleteOne({'_id':req.user.id})
+  .then(() => {
+    res.redirect('/logout');
+  })
+  .catch((err)=> res.send(err));
+})
 
 site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   if (req.query.book != undefined) {
