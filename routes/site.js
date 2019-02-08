@@ -8,6 +8,8 @@ const checkGuest = checkRoles('GUEST');
 const checkEditor = checkRoles('EDITOR');
 const checkAdmin = checkRoles('ADMIN');
 
+const cache = require('memory-cache');
+
 const bcrypt = require("bcryptjs");
 const bcryptSalt = 10;
 
@@ -16,6 +18,29 @@ const Book = require('../models/book');
 const BookList = require('../models/bookList');
 const Message = require('../models/message');
 
+
+let memCache = new cache.Cache();
+    let cacheMiddleware = (duration) => {
+      console.log('cache!');
+        return (req, res, next) => {
+            let key =  '__express__' + req.originalUrl || req.url;
+            console.log('cache key!:', key);
+            let cacheContent = memCache.get(key);
+            if(cacheContent){
+              console.log('there is cache!');
+                res.send( cacheContent );
+                return
+            }else{
+              console.log('there is NO cache!');
+                res.sendResponse = res.send
+                res.send = (body) => {
+                    memCache.put(key,body,duration*1000);
+                    res.sendResponse(body)
+                }
+                next()
+            }
+        }
+    }
 
 function checkRoles(role) {
   return function (req, res, next) {
@@ -150,7 +175,7 @@ const createBookList = async (userId, bookId, starred) => {
   
 }
 
-site.get("/", (req, res, next) => {
+site.get("/",cacheMiddleware(30), (req, res, next) => {
   res.render("home");
 });
 site.get("/home", (req, res, next) => {

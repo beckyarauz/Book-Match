@@ -14,6 +14,8 @@ const session = require('express-session');
 const bcrypt = require('bcryptjs');
 const bcryptSalt = 10;
 const passport = require('passport');
+const helmet = require('helmet');
+
 // First example
 const LocalStrategy = require('passport-local').Strategy;
 // set up Facebook strategy
@@ -42,9 +44,8 @@ const debug = require('debug')(`${app_name}:${path.basename(__filename).split('.
 const app = express();
 
 
-
-
 // Middleware Setup
+app.use(helmet());
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
