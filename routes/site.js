@@ -4,9 +4,6 @@ const ensureLogin = require('connect-ensure-login');
 const request = require('request');
 const rp = require('request-promise');
 const fetch = require("node-fetch");
-const checkGuest = checkRoles('GUEST');
-const checkEditor = checkRoles('EDITOR');
-const checkAdmin = checkRoles('ADMIN');
 
 const cache = require('memory-cache');
 
@@ -41,16 +38,6 @@ let memCache = new cache.Cache();
             }
         }
     }
-
-function checkRoles(role) {
-  return function (req, res, next) {
-    if (req.isAuthenticated() && req.user.role === role) {
-      return next();
-    } else {
-      res.redirect('/home')
-    }
-  }
-}
 
 // getUser function gets all the information needed to be rendered on user profiles
 const getUser = async (req,username) => {
@@ -185,7 +172,11 @@ site.get('/',cacheMiddleware(30), (req, res, next) => {
 });
 site.get('/home', (req, res, next) => {
   if(req.user !== null && req.user !== undefined){
-    res.render('home', {layout:'private-layout'});
+    if(req.user.role !== 'ADMIN'){
+      res.render('home', {layout:'private-layout'});
+    } else{
+      res.redirect('/admin');
+    }
   } else {
     res.render('home');
   }
@@ -231,7 +222,6 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   })();
 
 });
-
 // //with params: render profile page for the user listed in the request
 site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   
@@ -432,13 +422,6 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
   }
   
 
-});
-
-site.get('/admin', checkAdmin, (req, res) => {
-  res.render('admin', {
-    layout:'private-layout',
-    user: req.user
-  });
 });
 
 site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
