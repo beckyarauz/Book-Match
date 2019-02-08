@@ -338,7 +338,7 @@ margin:20px;
   line-height:18px;
 }
 
-.card {
+.card-template {
   padding-top: 20px;
   margin: 10px 0 20px 0;
   background-color: rgba(214, 224, 226, 0.2);
@@ -360,19 +360,19 @@ margin:20px;
   max-width: 200px;
 }
 
-.card .card-heading {
+.card-template .card-heading {
   padding: 0 20px;
   margin: 0;
 }
 
-.card .card-heading.simple {
+.card-template .card-heading.simple {
   font-size: 20px;
   font-weight: 300;
   color: #777;
   border-bottom: 1px solid #e5e5e5;
 }
 
-.card .card-heading.image img {
+.card-template .card-heading.image img {
   display: inline-block;
   width: 46px;
   height: 46px;
@@ -384,57 +384,57 @@ margin:20px;
   border-radius: 50%;
 }
 
-.card .card-heading.image .card-heading-header {
+.card-template .card-heading.image .card-heading-header {
   display: inline-block;
   vertical-align: top;
 }
 
-.card .card-heading.image .card-heading-header h3 {
+.card-template .card-heading.image .card-heading-header h3 {
   margin: 0;
   font-size: 14px;
   line-height: 16px;
   color: #262626;
 }
 
-.card .card-heading.image .card-heading-header span {
+.card-template .card-heading.image .card-heading-header span {
   font-size: 12px;
   color: #999999;
 }
 
-.card .card-body {
+.card-template .card-body {
   padding: 0 20px;
   margin-top: 20px;
 }
 
-.card .card-media {
+.card-template .card-media {
   padding: 0 20px;
   margin: 0 -14px;
 }
 
-.card .card-media img {
+.card-template .card-media img {
   max-width: 100%;
   max-height: 100%;
 }
 
-.card .card-actions {
+.card-template .card-actions {
   min-height: 30px;
   padding: 0 20px 20px 20px;
   margin: 20px 0 0 0;
 }
 
-.card .card-comments {
+.card-template .card-comments {
   padding: 20px;
   margin: 0;
   background-color: #f8f8f8;
 }
 
-.card .card-comments .comments-collapse-toggle {
+.card-template .card-comments .comments-collapse-toggle {
   padding: 0;
   margin: 0 20px 12px 20px;
 }
 
-.card .card-comments .comments-collapse-toggle a,
-.card .card-comments .comments-collapse-toggle span {
+.card-template .card-comments .comments-collapse-toggle a,
+.card-template .card-comments .comments-collapse-toggle span {
   padding-right: 5px;
   overflow: hidden;
   font-size: 12px;
@@ -448,7 +448,7 @@ margin:20px;
   font-weight: bold;
 }
 
-.card.people {
+.card-template.people {
   position: relative;
   display: inline-block;
   width: 170px;
@@ -459,11 +459,11 @@ margin:20px;
   vertical-align: top;
 }
 
-.card.people:first-child {
+.card-template.people:first-child {
   margin-left: 0;
 }
 
-.card.people .card-top {
+.card-template.people .card-top {
   position: absolute;
   top: 0;
   left: 0;
@@ -473,15 +473,15 @@ margin:20px;
   background-color: #ffffff;
 }
 
-.card.people .card-top.green {
+.card-template.people .card-top.green {
   background-color: #53a93f;
 }
 
-.card.people .card-top.blue {
+.card-template.people .card-top.blue {
   background-color: #427fed;
 }
 
-.card.people .card-info {
+.card-template.people .card-info {
   position: absolute;
   top: 150px;
   display: inline-block;
@@ -494,7 +494,7 @@ margin:20px;
   box-sizing: border-box;
 }
 
-.card.people .card-info .title {
+.card-template.people .card-info .title {
   display: block;
   margin: 8px 14px 0 14px;
   overflow: hidden;
@@ -504,7 +504,7 @@ margin:20px;
   color: #404040;
 }
 
-.card.people .card-info .desc {
+.card-template.people .card-info .desc {
   display: block;
   margin: 8px 14px 0 14px;
   overflow: hidden;
@@ -514,7 +514,7 @@ margin:20px;
   text-overflow: ellipsis;
 }
 
-.card.people .card-bottom {
+.card-template.people .card-bottom {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -528,7 +528,7 @@ margin:20px;
   box-sizing: border-box;
 }
 
-.card.hovercard {
+.card-template.hovercard {
   position: relative;
   padding-top: 0;
   overflow: hidden;
@@ -536,20 +536,20 @@ margin:20px;
   background-color: rgba(214, 224, 226, 0.2);
 }
 
-.card.hovercard .cardheader {
+.card-template.hovercard .cardheader {
   
   background: url("https://farm8.staticflickr.com/7896/45813890105_8beb46349e_b.jpg");
   background-size: cover;
   height: 135px;
 }
 
-.card.hovercard .avatar {
+.card-template.hovercard .avatar {
   position: relative;
   top: -50px;
   margin-bottom: -50px;
 }
 
-.card.hovercard .avatar img {
+.card-template.hovercard .avatar img {
   width: 100px;
   height: 100px;
   max-width: 100px;
@@ -560,11 +560,11 @@ margin:20px;
   border: 5px solid rgba(255,255,255,0.5);
 }
 
-.card.hovercard .info {
+.card-template.hovercard .info {
   padding: 4px 8px 10px;
 }
 
-.card.hovercard .info .title {
+.card-template.hovercard .info .title {
   margin-bottom: 4px;
   font-size: 24px;
   line-height: 1;
@@ -572,7 +572,7 @@ margin:20px;
   vertical-align: middle;
 }
 
-.card.hovercard .info .desc {
+.card-template.hovercard .info .desc {
   overflow: hidden;
   font-size: 12px;
   line-height: 20px;
@@ -580,7 +580,7 @@ margin:20px;
   text-overflow: ellipsis;
 }
 
-.card.hovercard .bottom {
+.card-template.hovercard .bottom {
   padding: 0 20px;
   margin-bottom: 17px;
 }
@@ -607,10 +607,20 @@ margin:20px;
   margin-left: 10px;
 }
 
+.card-template.hovercard.user{
+  overflow: visible;
+  position: relative;
+  top: 100px;
+  max-width: 200px;
+}
 
-
-
-
+.user-container{
+  min-width:300px;
+}
+.user-card{
+  max-width: 200px;
+  min-height: 200px;
+}
 //tagify
 
 .tagify {

@@ -1,0 +1,38 @@
+<div class="container body-container">
+    <h1>All Users</h1>
+    <div class="form-group">
+    <label for="admin-search-user">Search a User</label>
+    <input type="text" class="form-control" id="admin-search-user" placeholder="Enter username">
+  </div>
+    {{#if users}}
+    <div class="user-container flex wrap">
+        {{#each users}}
+        <div class="user-card" id="{{this.username}}">
+            <div class="card-template hovercard user">
+            <div class="avatar">
+            {{#if this.picture}}
+            <img alt="profile-pic" src={{this.picture}}>
+            {{else}}
+            {{#if this.gender}}
+            {{#if this.gender.F}}
+            <img alt="woman" src='/images/woman-avatar.png'>
+            {{/if}}
+            {{#if this.gender.M}}
+            <img alt="man" src='/images/man-avatar.png'>
+            {{/if}}
+            {{#if this.gender.N}}
+            <img alt="neutral" src='/images/neutral-avatar.png'>
+            {{/if}}
+            {{else}}
+            <img alt="neutral" src='/images/neutral-avatar.png'>
+            {{/if}}
+            {{/if}}
+        </div>
+        <p>{{this.username}}</p>
+        <a href="" class="btn btn-danger">Delete</a>
+        </div>
+        </div>
+        {{/each}}
+    </div>
+    {{/if}}
+</div>
