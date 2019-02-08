@@ -164,14 +164,21 @@ const createBookList = async (userId, bookId, starred) => {
 }
 
 site.get('/', cacheMiddleware(30), (req, res, next) => {
-  if (req.user.role !== 'ADMIN') {
-    res.redirect('/home');
+  if(req.user !== null && req.user !== undefined){
+    console.log(req.user);
+    if (req.user.role !== 'ADMIN') {
+      res.redirect('/home');
+    } else {
+      res.redirect('/admin');
+    }
   } else {
-    res.redirect('/admin');
+    res.redirect('/home');
   }
+ 
 });
 
 site.get('/home', (req, res, next) => {
+  if(req.user !== null && req.user !== undefined){
   if (req.user !== null && req.user !== undefined) {
     res.render('home', {
       layout: 'private-layout'
@@ -179,6 +186,9 @@ site.get('/home', (req, res, next) => {
   } else {
     res.render('home');
   }
+} else {
+  res.render('home');
+}
 });
 
 // //without params: render profile page for logged in user
