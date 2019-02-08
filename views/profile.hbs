@@ -157,52 +157,7 @@
         <div class="tab-pane text-center" id="friends">
           <div class="row wrap my-books">
             {{#if friends}}
-            {{#each friends}}
-            {{#if this.picture}}
-            <div class="friend-info">
-              <a href="/profile/{{this.username}}">
-                <img src={{this.picture}} alt="friend" id={{this._id}} class="rounded">
-              </a>
-
-              <div>
-                <p>{{this.username}}</p>
-              </div>
-            </div>
-            {{else}}
-            {{#if this.gender.F}}
-            <div class="friend-info" width="150px" height="150px">
-              <a href="/profile/{{this.username}}">
-                <img src="/images/woman-avatar.png" alt="Circle Image" class="avatar" width="150px" height="150px" id={{this._id}}>
-              </a>
-              <div>
-                <p>{{this.username}}</p>
-              </div>
-            </div>
-
-            {{/if}}
-            {{#if this.gender.M}}
-            <div class="friend-info" width="150px" height="150px">
-              <a href="/profile/{{this.username}}">
-                <img src="/images/man-avatar.png" alt="Circle Image" class="avatar" width="150px" height="150px" id={{this._id}}>
-              </a>
-              <div>
-                <p>{{this.username}}</p>
-              </div>
-            </div>
-            {{/if}}
-            {{#if this.gender.N}}
-            <div class="friend-info" width="150px" height="150px">
-              <a href="/profile/{{this.username}}">
-                <img src="/images/neutral-avatar.png" alt="Circle Image" class="avatar" width="150px" height="150px" id={{this._id}}>
-              </a>
-
-              <div>
-                <p>{{this.username}}</p>
-              </div>
-            </div>
-            {{/if}}
-            {{/if}}
-            {{/each}}
+              {{> users userInfo=friends}}
             {{/if}}
           </div>
         </div>

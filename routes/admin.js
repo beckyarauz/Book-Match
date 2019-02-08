@@ -30,20 +30,52 @@ admin.get('/manage-users', (req, res, next) => {
     let notfound = 'No users found';
     (async () => {
         try {
-            let users = await User.find();
+            let users = await User.find({'_id': {$ne: req.user._id}});
 
             if (users !== null) {
                 res.render('manage-users', {
                     layout: 'private-layout',
                     admin: req.user,
-                    users
+                    users,
+                    isAdmin: true
                 });
             } else {
                 res.render('manage-users', {
                     layout: 'private-layout',
                     admin: req.user,
-                    error: notfound
+                    error: notfound,
+                    isAdmin: true
                 });
+            }
+        } catch (e) {
+            console.log('GET /manage-users Error:', e.message)
+        }
+
+    })();
+});
+
+admin.post('/manage-users', (req, res, next) => {
+    let notfound = 'No users found';
+    console.log(req.body.action);
+    let action = req.body.action;
+    (async () => {
+        try {
+            if(action.delete){
+                let userId = action.user;
+                
+                let deletedBooklist = await BookList.deleteMany({'userId': userId});
+                let deletedMessages = await Message.deleteMany({'receiverId': userId});
+                let deletedUser = await User.findByIdAndDelete({'_id': userId });
+
+                if(deletedBooklist !== null){
+                    console.log('You deleted its Book List:', deletedBooklist);
+                }
+                if(deletedBooklist !== null){
+                console.log('You deleted its Messages:', deletedMessages);
+                }
+                if(deletedUser !== null){
+                    console.log('You deleted this user:', deletedUser);
+                }
             }
         } catch (e) {
             console.log('GET /manage-users Error:', e.message)

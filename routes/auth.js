@@ -23,16 +23,26 @@ var zxcvbn = require('zxcvbn');
 /* GET home page */
 
 router.get('/signup',(req, res, next) => {
-  res.render("auth/signup",{sitekey_recaptcha});
+  console.log(req.user);
+  if(req.user === undefined){
+    res.render('auth/signup');
+  } else {
+    res.redirect('/home');
+  }
 });
 
 
 router.get('/login', (req, res, next) => {
-  res.render('auth/login', { message: req.flash('error') });
+  console.log(req.user);
+  if(req.user === undefined){
+    res.render('auth/login', { message: req.flash('error') });
+  } else {
+    res.redirect('/');
+  }
 });
 
 router.post('/login', passport.authenticate('local', {
-  successRedirect: '/home',
+  successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true,
   passReqToCallback: true,

@@ -89,7 +89,8 @@ button.bg-book-dark:focus {
   background-color: #dae0e5 !important; }
 
 .body-container {
-  margin-top: 15vh; }
+  margin-top: 15vh;
+  margin-bottom: 10vh; }
 
 .btn-home {
   background-color: var(--main-bg-color) !important; }
@@ -496,7 +497,8 @@ button.bg-book-dark:focus {
   overflow: visible;
   position: relative;
   top: 100px;
-  max-width: 200px; }
+  max-width: 200px;
+  min-height: 80px; }
 
 .user-container {
   min-width: 300px; }
