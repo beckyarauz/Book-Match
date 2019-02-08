@@ -12,37 +12,45 @@ const LocalStrategy = require('passport-local').Strategy;
 
 
 var zxcvbn = require('zxcvbn');
-//https://www.npmjs.com/package/zxcvbn
 
-var Recaptcha = require('express-recaptcha').Recaptcha;
-//or with options
-var options = {'theme':'dark'};
-var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SECRET_KEY, options);
-//CREATE A NEW CLIENT ID AND PUT IT IN ENV FILE
-const sitekey_recaptcha = process.env.RECAPTCHA_SITE_KEY;
+// var Recaptcha = require('express-recaptcha').Recaptcha;
+// //or with options
+// var options = {'theme':'dark'};
+// var recaptcha = new Recaptcha(process.env.RECAPTCHA_SITE_KEY, process.env.RECAPTCHA_SECRET_KEY, options);
+
+// const sitekey_recaptcha = process.env.RECAPTCHA_SITE_KEY;
 
 /* GET home page */
 
 router.get('/signup',(req, res, next) => {
-  res.render("auth/signup",{sitekey_recaptcha});
+  console.log(req.user);
+  if(req.user === undefined){
+    res.render('auth/signup');
+  } else {
+    res.redirect('/home');
+  }
 });
 
 
 router.get('/login', (req, res, next) => {
-  res.render('auth/login', { message: req.flash('error') });
+  console.log(req.user);
+  if(req.user === undefined){
+    res.render('auth/login', { message: req.flash('error') });
+  } else {
+    res.redirect('/');
+  }
 });
 
 router.post('/login', passport.authenticate('local', {
-  successRedirect: '/profile',
+  successRedirect: '/',
   failureRedirect: '/login',
   failureFlash: true,
   passReqToCallback: true,
 }));
 
-router.get("/logout", (req, res, next) => {
+router.get('/logout', (req, res, next) => {
   req.session.destroy((err) => {
-    // cannot access session here
-    res.redirect("/home");
+    res.redirect('/home');
   });
 });
 

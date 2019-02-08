@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node ./bin/www",
     "dev": "nodemon ./bin/www",
-    "build": "browserify ./public/javascripts/script.js -o ./public/javascripts/bundle.js"
+    "build": "browserify ./public/javascripts/tagify.js -o ./public/javascripts/tagify-bundle.js"
   },
   "dependencies": {
     "@yaireo/tagify": "^2.11.1",

@@ -8,7 +8,7 @@
     {{#if matches}}
     <div class="container matches-container flex wrap">
         {{#each matches}}
-            {{> users user=this.user }}
+            {{> matches-users user=this.user }}
         {{/each}}
     </div>
     {{else}}

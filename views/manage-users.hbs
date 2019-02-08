@@ -1,0 +1,12 @@
+<div class="container body-container">
+    <h1>All Users</h1>
+    <div class="form-group">
+    <label for="admin-search-user">Search a User</label>
+    <input type="text" class="form-control" id="admin-search-user" placeholder="Enter username">
+    <a href="#" class="btn btn-info">Search</a>
+  </div>
+    {{#if users}}
+    {{> users userInfo=users isAdmin=isAdmin}}
+    {{/if}}
+</div>
+<script src="/javascripts/admin-manage.js"></script>

@@ -1,41 +1,35 @@
-<div class="card hovercard">
-    <div class="cardheader">
-    </div>
-    <div class="avatar">
-        {{!-- Images cannot work right now b/c code does not match database model --}}
-        {{#if this.user.picture}}
-        <img alt="" src={{this.user.picture}}>
-        {{else}}
-        {{#if this.user.gender.F}}
-        <img alt="woman" src='/images/woman-avatar.png'>
-        {{/if}}
-        {{#if this.user.gender.M}}
-        <img alt="man" src='/images/man-avatar.png'>
-        {{/if}}
-        {{#if this.user.gender.N}}
-        <img alt="neutral" src='/images/neutral-avatar.png'>
-        {{/if}}
-        {{/if}}
-        {{!-- <img alt="" src='/images/neutral-avatar.png'> --}}
-    </div>
-    <div class="info">
-        <div class="username">{{this.user.username}}</div>
-    </div>
-    <div class="bottom">
-        <a class="btn btn-sm" href="#">
-            Matching books: {{this.matchingBooks}}
-        </a>
-        <div class="user-icons" id={{this.user._id}}>
+<div class="user-container flex wrap">
+    {{#each userInfo}}
+    <div class="user-card">
+        <div class="card-template hovercard user" id="{{this._id}}">
+            <a href="/profile/{{this.username}}">
+                <div class="avatar">
+                    {{#if this.picture}}
+                    <img alt="profile-pic" src={{this.picture}}>
+                    {{else}}
+                    {{#if this.gender}}
+                    {{#if this.gender.F}}
+                    <img alt="woman" src='/images/woman-avatar.png'>
+                    {{/if}}
+                    {{#if this.gender.M}}
+                    <img alt="man" src='/images/man-avatar.png'>
+                    {{/if}}
+                    {{#if this.gender.N}}
+                    <img alt="neutral" src='/images/neutral-avatar.png'>
+                    {{/if}}
+                    {{else}}
+                    <img alt="neutral" src='/images/neutral-avatar.png'>
+                    {{/if}}
+                    {{/if}}
 
-            {{#if this.user.added}}
-            <i class="material-icons add-friend" data-toggle="tooltip" title="Remove Friend" id="remove-friend">
-                person_add_disabled
-            </i>
-            {{else}}
-            <i class="material-icons add-friend" data-toggle="tooltip" title="Add Friend" id="add-friend">
-                person_add
-            </i>
-            {{/if}}
+            </a>
         </div>
+        </a>
+        <p>{{this.username}}</p>
+        {{#if ../isAdmin}}
+        <a href="" class="btn btn-danger delete-user">Delete</a>
+        {{/if}}
     </div>
+</div>
+{{/each}}
 </div>
