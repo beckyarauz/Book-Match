@@ -21,17 +21,17 @@ const Message = require('../models/message');
 
 let memCache = new cache.Cache();
     let cacheMiddleware = (duration) => {
-      console.log('cache!');
+      // console.log('cache!');
         return (req, res, next) => {
             let key =  '__express__' + req.originalUrl || req.url;
-            console.log('cache key!:', key);
+            // console.log('cache key!:', key);
             let cacheContent = memCache.get(key);
             if(cacheContent){
-              console.log('there is cache!');
+              // console.log('there is cache!');
                 res.send( cacheContent );
                 return
             }else{
-              console.log('there is NO cache!');
+              // console.log('there is NO cache!');
                 res.sendResponse = res.send
                 res.send = (body) => {
                     memCache.put(key,body,duration*1000);
@@ -175,11 +175,20 @@ const createBookList = async (userId, bookId, starred) => {
   
 }
 
-site.get("/",cacheMiddleware(30), (req, res, next) => {
-  res.render("home");
+site.get('/',cacheMiddleware(30), (req, res, next) => {
+  console.log(req.user);
+  if(req.user !== null && req.user !== undefined){
+    res.render('home', {layout:'private-layout'});
+  } else {
+    res.render('home');
+  }
 });
-site.get("/home", (req, res, next) => {
-  res.render("home");
+site.get('/home', (req, res, next) => {
+  if(req.user !== null && req.user !== undefined){
+    res.render('home', {layout:'private-layout'});
+  } else {
+    res.render('home');
+  }
 });
 
 // //without params: render profile page for logged in user
