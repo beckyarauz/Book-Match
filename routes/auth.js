@@ -9,6 +9,7 @@ const bcryptSalt = 10;
 const passport = require("passport");
 
 const LocalStrategy = require('passport-local').Strategy;
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 
 var zxcvbn = require('zxcvbn');
@@ -47,6 +48,18 @@ router.post('/login', passport.authenticate('local', {
   failureFlash: true,
   passReqToCallback: true,
 }));
+
+router.get("/login/facebook", passport.authenticate("facebook"));
+router.get("/login/facebook/callback", /*passport.authenticate("facebook", {
+  successRedirect: "/profile",
+  failureRedirect: "/login"*/
+  passport.authenticate('facebook', { failureRedirect: '/login' }),
+  function(req, res) {
+    // console.log(req.user);
+    if (req.user.username=="" || req.user.username == undefined) res.redirect('/profile-setup');
+    else res.redirect('/profile')
+});
+//}));
 
 router.get('/logout', (req, res, next) => {
   req.session.destroy((err) => {

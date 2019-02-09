@@ -18,8 +18,9 @@ const helmet = require('helmet');
 
 // First example
 const LocalStrategy = require('passport-local').Strategy;
-// set up Facebook strategy
 
+// set up Facebook strategy
+const FacebookStrategy = require('passport-facebook').Strategy;
 
 
 const flash = require('connect-flash');
@@ -88,8 +89,33 @@ passport.use(new LocalStrategy((username, password, next) => {
   });
 }));
 
-// Facebook Strategy
 
+passport.use(new FacebookStrategy({
+  clientID: process.env.FACEBOOK_APP_ID,
+  clientSecret: process.env.FACEBOOK_APP_SECRET,
+  callbackURL: '/login/facebook/callback'
+},
+function(accessToken, refreshToken, profile, cb) {
+  User.findOne({ fbID: profile.id })
+    .then((user) => {
+      if (user) return cb(null,user);
+      const newUser = new User({
+        fbID: profile.id
+      });
+        
+      newUser.save()
+      .then((newUser) => {
+        cb(null, newUser);
+      })
+      .catch((err) => {
+        console.log(err);
+        return (err,newUser);
+      })
+    })
+    .catch((err) => {
+      return cb(err, user);
+    })
+  }));
 
 // app.js
 app.use(passport.initialize());
@@ -156,10 +182,5 @@ const admin = require('./routes/admin');
 app.use('/admin', admin);
 const site = require('./routes/site');
 app.use('/', site);
-
-
-
-
-
 
 module.exports = app;
