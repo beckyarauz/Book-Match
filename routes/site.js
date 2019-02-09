@@ -637,6 +637,7 @@ site.get('/book/:bookID' ,ensureLogin.ensureLoggedIn('/login') , (req, res, next
 })
 
 site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
+ 
   let userSearch = req.query.username;
 
   (async () => {
@@ -653,46 +654,55 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       bookArr = bookList.map((el) => el.bookId)
       //Query DB for list of users with a count their respective number of matching books
 
-      let matches = await BookList.aggregate([{
-          $match: {
-            userId: {
-              $ne: req.user._id
-            } //exclude own user --> disable for testing
-          }
-        },
-        {
-          $group: { //calculate number matching books for each user
-            _id: '$userId',
-            matchingBooks: {
-              $sum: {
-                $cond: [{
-                  $in: ["$bookId", bookArr]
-                }, 1, 0]
-              }
-            },
-          }
-        },
-        {
-          $lookup: { //lookup user details from "users" collection
-            from: 'users',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'user'
-          }
-        },
-        {
-          $match: { //only display users that have books from requesting users own book list in their collection
-            matchingBooks: {
-              $gt: 0
-            }
-          }
-        },
-        {
-          $unwind: "$user"
-        },
-      ]).sort({
-        matchingBooks: -1
-      });
+      let matches = await User.aggregate([
+                {
+                  $match: {
+                    _id: {$ne: req.user._id} //exclude own user --> disable for testing
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'booklists',
+                    localField: '_id',
+                    foreignField: 'userId',
+                    as: 'booklist'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: "$booklist",
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+                {
+                  $group: { //calculate number matching books for each user
+                    _id: '$_id',
+                    matchingBooks: {
+                      $sum: {
+                        $cond: [{
+                          $in: ["$booklist.bookId", bookArr]
+                        }, 1, 0]
+                      }
+                    }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'user'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+              ]).sort({
+                matchingBooks: -1
+              }) //sort by number of matching books, descending
 
 
       for (match of matches) {
@@ -722,9 +732,7 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
     } catch (e) {
       console.log('GET /matches error:', e.message);
     }
-
-
-  })()
+  })();
 
 });
 
