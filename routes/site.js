@@ -276,11 +276,14 @@ site.get('/profile/:username', ensureLogin.ensureLoggedIn('/login'), (req, res) 
 
 site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   User.findOne({
-      username: req.user.username
+      // username: req.user.username
+      _id: req.user._id
     })
     .then(user => {
       let tags = user.bookGenre.join();
-
+      let needsUsername = (user.username=="" || user.username == undefined);
+      let needsPassword = (user.password=="" || user.password == undefined);
+      console.log(needsUsername);
       res.render('profileSetup', {
         layout: 'private-layout',
         username: user.username,
@@ -295,7 +298,9 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
         userfbID: user.fbID,
         userigID: user.igID,
         userslackID: user.slackID,
-        usertwitterID: user.twitterID
+        usertwitterID: user.twitterID,
+        needsUsername: needsUsername,
+        needsPassword:needsPassword
       });
     })
     .catch(err => console.log(err));
@@ -321,7 +326,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     (async () => {
       try {
         let user = await User.findOne({
-          username: req.user.username
+          // username: req.user.username
+          _id: req.user._id
         });
 
         user.set({
@@ -350,7 +356,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     (async () => {
       try {
         let user = await User.findOne({
-          username: req.user.username
+          // username: req.user.username
+          _id: req.user._id
         });
 
         user.set({
@@ -364,7 +371,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     })();
   } else {
     let updatedUser = {
-      username: req.user.username,
+      username: req.body.username,
       firstname: req.body.firstName,
       lastname: req.body.lastName,
       userpicture: req.body.profilePic,
@@ -380,7 +387,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     };
     //console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
     User.findOne({
-        username: updatedUser.username
+        // username: updatedUser.username
+        _id: req.user._id
       })
       .then(user => {
         // console.log(`form data: ${updatedUser.firstname} ${updatedUser.lastname} ${updatedUser.description}`);
@@ -410,6 +418,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         }
 
         user.set({
+          username: updatedUser.username,
           firstName: updatedUser.firstname,
           lastName: updatedUser.lastname,
           picture: updatedUser.userpicture,

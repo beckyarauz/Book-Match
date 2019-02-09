@@ -55,7 +55,9 @@ router.get("/login/facebook/callback", /*passport.authenticate("facebook", {
   failureRedirect: "/login"*/
   passport.authenticate('facebook', { failureRedirect: '/login' }),
   function(req, res) {
-    res.redirect('/profile');
+    // console.log(req.user);
+    if (req.user.username=="" || req.user.username == undefined) res.redirect('/profile-setup');
+    else res.redirect('/profile')
 });
 //}));
 
