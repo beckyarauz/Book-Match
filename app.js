@@ -93,7 +93,7 @@ passport.use(new LocalStrategy((username, password, next) => {
 passport.use(new FacebookStrategy({
   clientID: process.env.FACEBOOK_APP_ID,
   clientSecret: process.env.FACEBOOK_APP_SECRET,
-  callbackURL: '/login/facebook/callback'
+  callbackURL: process.env.FACEBOOK_CALLBACK_URL
 },
 function(accessToken, refreshToken, profile, cb) {
   User.findOne({ fbID: profile.id })
