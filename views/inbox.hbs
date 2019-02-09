@@ -99,7 +99,7 @@
             <thead>
                 <tr>
                     <th scope="col">
-                        <input type="checkbox" class="check-all">
+                        {{!-- <input type="checkbox" class="check-all"> --}}
                     </th>
                     <th scope="col">To</th>
                     <th scope="col">Message</th>
@@ -111,7 +111,7 @@
                 {{#each sentmessages}}
                 <tr id={{this._id}}>
                     <th scope="row">
-                        <input type="checkbox" class="mail-checkbox" data-mail={{this._id}}>
+                        {{!-- <input type="checkbox" class="mail-checkbox" data-mail={{this._id}}> --}}
                     </th>
                     <td>{{this.to}}</td>
                     <td>{{this.message}}</td>

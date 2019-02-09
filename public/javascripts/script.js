@@ -1,12 +1,17 @@
 
 document.addEventListener('DOMContentLoaded', () => {
   //BOOK EVENT HANDLERS
-  function isTouchDevice() {
-    return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
-  }
-  if (isTouchDevice() === false) {
+  // function isTouchDevice() {
+  //   return true == ("ontouchstart" in window || window.DocumentTouch && document instanceof DocumentTouch);
+  // }
+  // if (isTouchDevice() === false) {
+  //   $('[data-toggle="tooltip"]').tooltip();
+  // }
+  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
+    console.log('mobile device');
+   } else{
     $('[data-toggle="tooltip"]').tooltip();
-  }
+   }
   
   function removeBook(id, element) {
     element.toggleClass('clicked');
@@ -59,11 +64,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if (input.files && input.files[0]) {
       var reader = new FileReader();
       reader.onload = function (e) {
-        console.log('my image:', $('#my-image').attr('src'));
 
         if (resize instanceof Croppie) {
-          console.log('instance!');
-
           resize.destroy();
           resize = null;
         }
@@ -92,7 +94,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
           resize.result('base64')
             .then(function (dataImg) {
-              console.log('dataImg', dataImg);
               var data = [{
                 image: dataImg
               }, {
@@ -142,27 +143,5 @@ document.addEventListener('DOMContentLoaded', () => {
     const that = $(this);
     $(this).attr('id') === 'remove-friend' ? removeFriend(userId, that) : addFriend(userId, that);
   });
-
-
-  //MESSAGES
-
-  if ($('#send-message')) {
-    console.log('inbox!');
-    $('#send-message').click(function (e) {
-      console.log('sending a message!');
-      const to = $('#inputUserName').val();
-      const message = $('#message-body').val();
-      console.log('to:', to);
-      console.log('message:', message);
-      axios.post('/inbox', {
-        action: {
-          send: true,
-          to: to,
-          message: message
-        }
-      });
-
-    })
-  }
 
 }, false);

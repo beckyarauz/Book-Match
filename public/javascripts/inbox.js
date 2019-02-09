@@ -1,7 +1,8 @@
-
 document.addEventListener('DOMContentLoaded', () => {
+
+
     $('.sent-mail').toggle();
-    
+
     $('.delete-mail').click(function () {
         let mailId = $(this).attr('data-mail');
 
@@ -45,12 +46,27 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    $('#sent-mail').click(function (){
+    $('#sent-mail').click(function () {
         $('.sent-mail').show();
         $('#inbox-mail').hide();
-    })
-    $('#in-mail').click(function (){
+    });
+    $('#in-mail').click(function () {
         $('.sent-mail').hide();
         $('#inbox-mail').show();
-    })
-})
+    });
+    $('#send-message').click(function (e) {
+        console.log('sending a message!');
+        const to = $('#inputUserName').val();
+        const message = $('#message-body').val();
+        console.log('to:', to);
+        axios.post('/inbox', {
+            action: {
+                send: true,
+                to: to,
+                message: message
+            }
+        });
+        location.reload();
+
+    });
+});
