@@ -164,7 +164,7 @@ const createBookList = async (userId, bookId, starred) => {
 }
 
 site.get('/', cacheMiddleware(30), (req, res, next) => {
-  if(req.user !== null && req.user !== undefined){
+  if (req.user !== null && req.user !== undefined) {
     if (req.user.role !== 'ADMIN') {
       res.redirect('/home');
     } else {
@@ -173,21 +173,21 @@ site.get('/', cacheMiddleware(30), (req, res, next) => {
   } else {
     res.redirect('/home');
   }
- 
+
 });
 
 site.get('/home', (req, res, next) => {
-  if(req.user !== null && req.user !== undefined){
   if (req.user !== null && req.user !== undefined) {
-    res.render('home', {
-      layout: 'private-layout'
-    });
+    if (req.user !== null && req.user !== undefined) {
+      res.render('home', {
+        layout: 'private-layout'
+      });
+    } else {
+      res.render('home');
+    }
   } else {
     res.render('home');
   }
-} else {
-  res.render('home');
-}
 });
 
 // //without params: render profile page for logged in user
@@ -507,6 +507,8 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
+  let errors = {};
+  let messages = {};
   if (action.star || action.add) {
     BookList.findOne({
         'userId': req.user._id,
@@ -515,9 +517,9 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       .then(data => {
         if (data === null) {
           console.log('There is no book on BookList collection');
-          if (req.user.starredBookLimit === 0) {
-            console.log(`You can't add more books, you reached your limits.`, `Your book limit: ${req.user.starredBookLimit}`);
-          }
+          // if (req.user.starredBookLimit === 0 && action.star) {
+          //   errors.bookLimit = `You can only have 5 books in your Favorite Books collection`;
+          // }
           User.findOne({
               username: req.user.username
             })
@@ -618,14 +620,14 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 });
 
-site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, next) => {
+site.get('/book/:bookID' ,ensureLogin.ensureLoggedIn('/login') , (req, res, next) => {
   const url = `https://www.googleapis.com/books/v1/volumes/${req.params.bookID}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
   let items;
   request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       let info = JSON.parse(body);
-      res.render('./public/book-detail', {
-        book: info
+      res.render('book-detail', {
+        book: info,
       })
       return;
     } else {
@@ -647,7 +649,6 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
         '_id': req.user._id
       });
       let myFriends = userInfo.friends;
-      console.log('my Friends:', myFriends);
 
       bookArr = bookList.map((el) => el.bookId)
       //Query DB for list of users with a count their respective number of matching books
@@ -782,23 +783,28 @@ site.get('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
   (async () => {
     try {
+      let errors = {};
       let messages = await Message.find({
         to: user.username
       });
+      let sentmessages = await Message.find({
+        from: user.username
+      });
 
-      if (messages == null) {
-        console.log('no messages found for user:', user.username);
-        res.render("inbox", {
-          layout: 'private-layout',
-          error: "You have no messages :("
-        });
-        return;
-      } else {
-        res.render("inbox", {
-          layout: 'private-layout',
-          messages
-        });
-      }
+      if (messages.length === 0 || messages === null) {
+        errors.inbox = "You have no messages :(";
+      } 
+
+      if (sentmessages.length === 0 || sentmessages === null) {
+        errors.sent = "You have not sent any messages :(";
+      } 
+
+      res.render("inbox", {
+        layout: 'private-layout',
+        messages,
+        sentmessages,
+        errors
+      });
 
     } catch (e) {
       console.log('Error on GET /inbox', e.message);
@@ -808,13 +814,14 @@ site.get('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   let to, from, message;
   (async () => {
+    let action = req.body.action;
     try {
-      if (req.body.action.send) {
-        if (req.body.action.to) {
+      if (action.send) {
+        if (action.to) {
           from = req.user.username;
-          message = req.body.action.message;
+          message = action.message;
 
-          to = req.body.action.to;
+          to = action.to;
 
           let toUser = await User.findOne({
             'username': to
@@ -843,6 +850,22 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
         } else {
           throw new Error('No username', 'Please put a username to send your message');
+        }
+      } else if (action.delete) {
+        if (!action.many) {
+          let messageId = action.messageId;
+          let deletedMessage = await Message.findByIdAndDelete({
+            '_id': messageId
+          });
+          console.log('Message deleted!', deletedMessage._id);
+        } else {
+          let messageIds = action.messageIds;
+          let deletedMessages = await Message.deleteMany({
+            '_id': {
+              $in: messageIds
+            }
+          });
+          console.log('Messages deleted!', deletedMessages);
         }
       }
     } catch (e) {
