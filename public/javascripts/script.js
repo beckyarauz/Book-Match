@@ -7,10 +7,12 @@ document.addEventListener('DOMContentLoaded', () => {
   // if (isTouchDevice() === false) {
   //   $('[data-toggle="tooltip"]').tooltip();
   // }
+  $('[data-toggle="tooltip"]').tooltip('disable')
   if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
     console.log('mobile device');
    } else{
-    $('[data-toggle="tooltip"]').tooltip();
+     console.log('not mobile');
+     $('[data-toggle="tooltip"]').tooltip('enable');
    }
   
   function removeBook(id, element) {
