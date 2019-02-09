@@ -49,7 +49,7 @@ const getUser = async (req, username) => {
 
     if (ownBookList != null) {
       ownBookList = ownBookList.map((el) => el.bookId);
-      console.log(ownBookList);
+      // console.log(ownBookList);
     }
 
     user = await User.findOne({
@@ -131,7 +131,7 @@ const getUser = async (req, username) => {
       userInfo.bookArr.push(volumeInfo);
       // //bookList are just ids
       // let dbBook = await BookList.findOne({bookId: book});
-      console.log('volume Info:', volumeInfo);
+      // console.log('volume Info:', volumeInfo);
 
       if (book.starred) {
         userInfo.favBookArr.push(volumeInfo);
@@ -164,8 +164,7 @@ const createBookList = async (userId, bookId, starred) => {
 }
 
 site.get('/', cacheMiddleware(30), (req, res, next) => {
-  if(req.user !== null && req.user !== undefined){
-    console.log(req.user);
+  if (req.user !== null && req.user !== undefined) {
     if (req.user.role !== 'ADMIN') {
       res.redirect('/home');
     } else {
@@ -174,21 +173,21 @@ site.get('/', cacheMiddleware(30), (req, res, next) => {
   } else {
     res.redirect('/home');
   }
- 
+
 });
 
 site.get('/home', (req, res, next) => {
-  if(req.user !== null && req.user !== undefined){
   if (req.user !== null && req.user !== undefined) {
-    res.render('home', {
-      layout: 'private-layout'
-    });
+    if (req.user !== null && req.user !== undefined) {
+      res.render('home', {
+        layout: 'private-layout'
+      });
+    } else {
+      res.render('home');
+    }
   } else {
     res.render('home');
   }
-} else {
-  res.render('home');
-}
 });
 
 // //without params: render profile page for logged in user
@@ -198,8 +197,6 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   (async () => {
     try {
       let user = await getUser(req, username);
-      // console.log(user.friends);
-      console.log(user.bookArr);
       let friendsInfo = await User.find({
         '_id': {
           $in: user.friends
@@ -310,18 +307,13 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
   if (req.body.tags) {
     console.log('Tag was addded!')
     let tags = req.body.tags;
-    // console.log('tags',tags);
     let data = JSON.parse(tags);
-    // console.log('type of tags',typeof data);
-    // console.log('data',data);
 
     let tagValues = [];
 
     for (el of data) {
-      // console.log('element', typeof el,el)
       tagValues.push(...Object.values(el));
     }
-    // console.log(tagValues);
 
     (async () => {
       try {
@@ -348,10 +340,8 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     let tagValues = [];
 
     for (el of tags) {
-      // console.log('element', typeof el,el)
       tagValues.push(...Object.values(el));
     }
-    console.log(tagValues);
 
     (async () => {
       try {
@@ -400,7 +390,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         }
 
         let genderResult = {
-          'N': false,
+          'N': true,
           'F': false,
           'M': false
         };
@@ -477,7 +467,6 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             .then(books => {
               let starredBooks = books.filter(book => book.starred);
               let booksDB = books;
-              // console.log('ITEMS:',items);
 
               bookInfo = items.map(item => {
                 return {
@@ -486,18 +475,14 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                   'title': item.volumeInfo.title,
                   'subtitle': item.volumeInfo.subtitle,
                   'added': (() => {
-                    // for(book of starredBooks){
                     for (let i = 0; i < booksDB.length; i++) {
-                      // console.log(`comparing ${item.id} and ${book.bookId}`);
                       if (item.id === booksDB[i].bookId) {
                         return true;
                       }
                     }
                   })(),
                   'starred': (() => {
-                    // for(book of starredBooks){
                     for (let i = 0; i < starredBooks.length; i++) {
-                      // console.log(`comparing ${item.id} and ${book.bookId}`);
                       if (item.id === starredBooks[i].bookId) {
                         return true;
                       }
@@ -514,7 +499,6 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             .catch(e => console.log(e.message));
         } else {
           bookInfo = items.map(item => {
-            // console.log(item.volumeInfo.imageLinks);
             return {
               'id': item.id,
               'image': item.volumeInfo.imageLinks ? item.volumeInfo.imageLinks.thumbnail : 'images/book_404.png',
@@ -538,8 +522,8 @@ site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-  console.log('POST in /search')
-  console.log('action', action);
+  let errors = {};
+  let messages = {};
   if (action.star || action.add) {
     BookList.findOne({
         'userId': req.user._id,
@@ -548,9 +532,9 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       .then(data => {
         if (data === null) {
           console.log('There is no book on BookList collection');
-          if (req.user.starredBookLimit === 0) {
-            console.log(`You can't add more books, you reached your limits.`, `Your book limit: ${req.user.starredBookLimit}`);
-          }
+          // if (req.user.starredBookLimit === 0 && action.star) {
+          //   errors.bookLimit = `You can only have 5 books in your Favorite Books collection`;
+          // }
           User.findOne({
               username: req.user.username
             })
@@ -651,20 +635,14 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
 });
 
-site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, next) => {
-  //const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
-  // console.log(req.params.bookID);
+site.get('/book/:bookID' ,ensureLogin.ensureLoggedIn('/login') , (req, res, next) => {
   const url = `https://www.googleapis.com/books/v1/volumes/${req.params.bookID}?key=${process.env.GOOGLE_BOOKS_API_KEY}`;
   let items;
   request(url, function (error, response, body) {
     if (!error && response.statusCode == 200) {
       let info = JSON.parse(body);
-      //console.log(info)
-      //items = info.items.map(item => item);
-      //console.log(items);
-      //res.send(info);
-      res.render('./public/book-detail', {
-        book: info
+      res.render('book-detail', {
+        book: info,
       })
       return;
     } else {
@@ -674,10 +652,8 @@ site.get('/book/:bookID' /*,ensureLogin.ensureLoggedIn('/login')*/ , (req, res, 
 })
 
 site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
-  //console.log("matches!");
-  //Query DB for list of own read books
+ 
   let userSearch = req.query.username;
-  // console.log("Search for user: "+userSearch);
 
   (async () => {
     try {
@@ -689,51 +665,59 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
         '_id': req.user._id
       });
       let myFriends = userInfo.friends;
-      console.log('my Friends:', myFriends);
 
       bookArr = bookList.map((el) => el.bookId)
       //Query DB for list of users with a count their respective number of matching books
 
-      let matches = await BookList.aggregate([{
-          $match: {
-            userId: {
-              $ne: req.user._id
-            } //exclude own user --> disable for testing
-          }
-        },
-        {
-          $group: { //calculate number matching books for each user
-            _id: '$userId',
-            matchingBooks: {
-              $sum: {
-                $cond: [{
-                  $in: ["$bookId", bookArr]
-                }, 1, 0]
-              }
-            },
-          }
-        },
-        {
-          $lookup: { //lookup user details from "users" collection
-            from: 'users',
-            localField: '_id',
-            foreignField: '_id',
-            as: 'user'
-          }
-        },
-        {
-          $match: { //only display users that have books from requesting users own book list in their collection
-            matchingBooks: {
-              $gt: 0
-            }
-          }
-        },
-        {
-          $unwind: "$user"
-        },
-      ]).sort({
-        matchingBooks: -1
-      });
+      let matches = await User.aggregate([
+                {
+                  $match: {
+                    _id: {$ne: req.user._id} //exclude own user --> disable for testing
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'booklists',
+                    localField: '_id',
+                    foreignField: 'userId',
+                    as: 'booklist'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: "$booklist",
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+                {
+                  $group: { //calculate number matching books for each user
+                    _id: '$_id',
+                    matchingBooks: {
+                      $sum: {
+                        $cond: [{
+                          $in: ["$booklist.bookId", bookArr]
+                        }, 1, 0]
+                      }
+                    }
+                  }
+                },
+                {
+                  $lookup: {
+                    from: 'users',
+                    localField: '_id',
+                    foreignField: '_id',
+                    as: 'user'
+                  }
+                },
+                {
+                  $unwind: {
+                    path: "$user",
+                    preserveNullAndEmptyArrays: true
+                  }
+                },
+              ]).sort({
+                matchingBooks: -1
+              }) //sort by number of matching books, descending
 
 
       for (match of matches) {
@@ -741,7 +725,6 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
           '_id': req.user._id,
           'friends': match._id
         });
-        // console.log('ad:',ad);
 
         if (ad !== null && ad.length > 0) {
           match.user.added = true;
@@ -751,15 +734,12 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
       let filteredMatches = [];
 
       matches.forEach((el) => {
-        // console.log (el)
         if (userSearch) {
           if (el.user.username.includes(userSearch)) filteredMatches.push(el);
         } else {
           if (el.matchingBooks > 0) filteredMatches.push(el)
         }
       });
-
-      console.log('filtered matches', filteredMatches);
       res.render('matches', {
         layout: 'private-layout',
         matches: filteredMatches
@@ -767,21 +747,17 @@ site.get('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
     } catch (e) {
       console.log('GET /matches error:', e.message);
     }
-
-
-  })()
+  })();
 
 });
 
 site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   const action = req.body.action;
-  // console.log('matches action',action);
   (async () => {
     try {
       if (action.add) {
         let user = await User.findOne({
           '_id': req.user._id,
-          // 'friends': req.user._id //Test id 
           'friends': action.user
         });
 
@@ -830,23 +806,28 @@ site.get('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
   (async () => {
     try {
+      let errors = {};
       let messages = await Message.find({
         to: user.username
       });
+      let sentmessages = await Message.find({
+        from: user.username
+      });
 
-      if (messages == null) {
-        console.log('no messages found for user:', user.username);
-        res.render("inbox", {
-          layout: 'private-layout',
-          error: "You have no messages :("
-        });
-        return;
-      } else {
-        res.render("inbox", {
-          layout: 'private-layout',
-          messages
-        });
-      }
+      if (messages.length === 0 || messages === null) {
+        errors.inbox = "You have no messages :(";
+      } 
+
+      if (sentmessages.length === 0 || sentmessages === null) {
+        errors.sent = "You have not sent any messages :(";
+      } 
+
+      res.render("inbox", {
+        layout: 'private-layout',
+        messages,
+        sentmessages,
+        errors
+      });
 
     } catch (e) {
       console.log('Error on GET /inbox', e.message);
@@ -856,21 +837,18 @@ site.get('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   let to, from, message;
   (async () => {
+    let action = req.body.action;
     try {
-      // console.log('/INBOX POST!');
-      if (req.body.action.send) {
-        // console.log('if action.send');
-        if (req.body.action.to) {
-          // console.log('if action.to');
+      if (action.send) {
+        if (action.to) {
           from = req.user.username;
-          message = req.body.action.message;
+          message = action.message;
 
-          to = req.body.action.to;
+          to = action.to;
 
           let toUser = await User.findOne({
             'username': to
           });
-          // console.log('to:', toUser);
 
           if (toUser === null) {
             console.log('User not found');
@@ -895,6 +873,22 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
         } else {
           throw new Error('No username', 'Please put a username to send your message');
+        }
+      } else if (action.delete) {
+        if (!action.many) {
+          let messageId = action.messageId;
+          let deletedMessage = await Message.findByIdAndDelete({
+            '_id': messageId
+          });
+          console.log('Message deleted!', deletedMessage._id);
+        } else {
+          let messageIds = action.messageIds;
+          let deletedMessages = await Message.deleteMany({
+            '_id': {
+              $in: messageIds
+            }
+          });
+          console.log('Messages deleted!', deletedMessages);
         }
       }
     } catch (e) {

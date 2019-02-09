@@ -141,14 +141,14 @@
             <div class="form-group row">
               <label for="twitterID" class="col-4 col-form-label">Twitter ID</label>
               <div class="col-8">
-                <input id="twitterID" name="usertwitterID" value="{{usertwitterID}}" class="form-control here" type="text">
+                <input id="twitterID" name="usertwitterID" value="{{usertwitterID}}" placeholder="twitter username" class="form-control here" type="text">
               </div>
             </div>
 
             <div class="form-group row">
               <label for="newpass" class="col-4 col-form-label">New Password</label>
               <div class="col-8">
-                <input id="newpass" name="newpass" placeholder="New Password" class="form-control here" type="password"
+                <input id="newpass" name="newpass" placeholder="New Password" autocomplete="new-password" class="form-control here" type="password"
                 {{#if needsPassword}} required=true {{/if}}>
               </div>
             </div>
