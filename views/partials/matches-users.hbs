@@ -1,6 +1,7 @@
 <div class="card-template hovercard">
     <div class="cardheader">
     </div>
+    <a href="/profile/{{this.user.username}}">
     <div class="avatar">
         {{!-- Images cannot work right now b/c code does not match database model --}}
         {{#if this.user.picture}}
@@ -18,6 +19,7 @@
         {{/if}}
         {{!-- <img alt="" src='/images/neutral-avatar.png'> --}}
     </div>
+    </a>
     <div class="info">
         <div class="username">{{this.user.username}}</div>
     </div>

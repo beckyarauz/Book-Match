@@ -899,14 +899,19 @@ a.mail-dropdown {
   padding: 20px; }
 
 .btn-compose {
-  background: none repeat scroll 0 0 #ff6c60;
-  color: #fff;
-  padding: 12px 0;
-  text-align: center;
-  width: 100%; }
+  background: #80d160;
+  color: #fff; }
 
 .btn-compose:hover {
-  background: none repeat scroll 0 0 #f5675c;
+  background: #8cd370;
+  color: #fff; }
+
+.btn-delete {
+  background-color: #ff6c60;
+  color: #fff; }
+
+.btn-delete:hover {
+  background: #ec7269;
   color: #fff; }
 
 ul.inbox-nav {
@@ -971,10 +976,9 @@ ul.labels-info li a i {
   padding: 0 22px; }
 
 .inbox-head {
-  background: none repeat scroll 0 0 #41cac0;
+  background-color: #41cac0;
   border-radius: 0 4px 0 0;
   color: #fff;
-  min-height: 80px;
   padding: 20px; }
 
 .inbox-head h3 {
@@ -1193,5 +1197,17 @@ ul {
 
 .inbox-template {
   width: 100%; }
+
+.table th, .table td {
+  vertical-align: middle; }
+
+.mail-btn {
+  width: 100%; }
+
+@media (max-width: 576px) {
+  .btn-text {
+    display: none; }
+  .mail-btn {
+    padding: 5px 0; } }
 
 /*# sourceMappingURL=style.css.map */
