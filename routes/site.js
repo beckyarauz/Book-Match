@@ -382,7 +382,7 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
         }
 
         let genderResult = {
-          'N': false,
+          'N': true,
           'F': false,
           'M': false
         };
