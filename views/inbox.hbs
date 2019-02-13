@@ -1,33 +1,33 @@
 <div class="container body-container" id="inbox-container">
 
-    <div class="row inbox-head" id="inbox-header" >
+    <div class="row inbox-head" id="inbox-header">
         <div class="container">
             <div class="row">
-            <h3>Inbox</h3>
-        </div>
-        <div class="row">
-            <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-                <a href="#" title="Inbox" class="btn btn-light mail-btn" id="in-mail">
-                   <i class="fas fa-envelope"></i> <span class="btn-text">Inbox</span>
-                </a>
+                <h3>Inbox</h3>
             </div>
-            <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-                <a href="#" title="Sent" class="btn btn-info mail-btn" id="sent-mail">
-                   <i class="fas fa-paper-plane"></i><span class="btn-text">Sent</span>
-                </a>
+            <div class="row">
+                <div class="col-3 col-sm-3 col-md-3 col-lg-3">
+                    <a href="#" title="Inbox" class="btn btn-light mail-btn" id="in-mail">
+                        <i class="fas fa-envelope"></i> <span class="btn-text">Inbox</span>
+                    </a>
+                </div>
+                <div class="col-3 col-sm-3 col-md-3 col-lg-3">
+                    <a href="#" title="Sent" class="btn btn-info mail-btn" id="sent-mail">
+                        <i class="fas fa-paper-plane"></i><span class="btn-text">Sent</span>
+                    </a>
+                </div>
+                <div class="col-3 col-sm-3 col-md-3 col-lg-3">
+                    <a href="#myModal" data-toggle="modal" title="Compose" class="btn btn-compose mail-btn">
+                        <i class="fas fa-pen"></i> <span class="btn-text">Write</span>
+                    </a>
+                </div>
+                <div class="col-3 col-sm-3 col-md-3 col-lg-3">
+                    <a href="#" title="Delete" class="btn btn-delete mail-btn" id="delete-all-mail">
+                        <i class="fas fa-trash-alt"></i> <span class="btn-text">Delete</span>
+                    </a>
+                </div>
+
             </div>
-            <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-                <a href="#myModal" data-toggle="modal" title="Compose" class="btn btn-compose mail-btn">
-                   <i class="fas fa-pen"></i> <span class="btn-text">Write</span>
-                </a>
-            </div>
-            <div class="col-3 col-sm-3 col-md-3 col-lg-3">
-                <a href="#" title="Delete" class="btn btn-delete mail-btn" id="delete-all-mail">
-                   <i class="fas fa-trash-alt"></i> <span class="btn-text">Delete</span>
-                </a>
-            </div>
-            
-        </div>
         </div>
 
         <!-- Modal -->
@@ -79,17 +79,20 @@
                 {{#if messages}}
 
                 {{#each messages}}
-                <tr id={{this._id}}>
+                <tr>
                     <th scope="row">
                         <input type="checkbox" class="mail-checkbox" data-mail={{this._id}}>
                     </th>
                     <td>{{this.from}}</td>
                     <td>{{this.message}}</td>
-                    
                 </tr>
 
                 {{/each}}
-
+                {{#if ../errors.inbox}}
+                <div class="no-message">
+                    <h1>{{../errors.inbox}}</h1>
+                </div>
+                {{/if}}
                 {{/if}}
             </tbody>
         </table>
@@ -109,9 +112,8 @@
                 {{#if sentmessages}}
 
                 {{#each sentmessages}}
-                <tr id={{this._id}}>
+                <tr>
                     <th scope="row">
-                        {{!-- <input type="checkbox" class="mail-checkbox" data-mail={{this._id}}> --}}
                     </th>
                     <td>{{this.to}}</td>
                     <td>{{this.message}}</td>
@@ -122,11 +124,7 @@
                 {{/if}}
             </tbody>
         </table>
-        {{#if errors.inbox}}
-        <div class="no-message">
-            <h1>{{errors.inbox}}</h1>
-        </div>
-        {{/if}}
+
         {{#if errors.sent}}
         <div class="no-message">
             <h1>{{errors.sent}}</h1>

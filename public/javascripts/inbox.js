@@ -15,7 +15,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     many: false,
                     messageId: mailId
                 }
-            })
+            });
+
             $(this).parent().parent().toggle();
         }
     });
@@ -36,7 +37,11 @@ document.addEventListener('DOMContentLoaded', () => {
                         many: true,
                         messageIds: checkedMailIds
                     }
-                })
+                }).then( r => console.log(r.data.message))
+                .catch(e => console.log(e));
+
+
+
                 for (mail of checkedMail) {
                     mail.parentElement.parentElement.hidden = true;
                 }

@@ -15,6 +15,7 @@ const bcrypt = require('bcryptjs');
 const bcryptSalt = 10;
 const passport = require('passport');
 const helmet = require('helmet');
+const compression = require('compression');
 
 // First example
 const LocalStrategy = require('passport-local').Strategy;
@@ -46,6 +47,7 @@ const app = express();
 
 
 // Middleware Setup
+app.use(compression());
 app.use(helmet());
 app.use(logger('dev'));
 app.use(bodyParser.json());
