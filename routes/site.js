@@ -182,10 +182,13 @@ site.get('/home', (req, res, next) => {
       res.render('home', {
         layout: 'private-layout'
       });
+      // res.json({message:'hey you'});
     } else {
       res.render('home');
+      // res.json({message:'hey you'});
     }
   } else {
+    // res.json({message:'hey you'});
     res.render('home');
   }
 });
@@ -305,7 +308,7 @@ site.get('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
 
 site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
   if (req.body.tags) {
-    console.log('Tag was addded!')
+    // console.log('Tag was added!')
     let tags = req.body.tags;
     let data = JSON.parse(tags);
 
@@ -333,9 +336,9 @@ site.post('/profile-setup', ensureLogin.ensureLoggedIn('/login'), (req, res) => 
     })();
 
   } else if (req.body.removetags) {
-    console.log('Tag was removed!');
+    // console.log('Tag was removed!');
     let tags = req.body.removetags;
-    console.log('tags', tags);
+    // console.log('tags', tags);
 
     let tagValues = [];
 
@@ -445,6 +448,7 @@ site.get('/deleteProfile', ensureLogin.ensureLoggedIn('/login'), (req, res, next
 site.get('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
   if (req.query.book != undefined) {
     const list = req.query.book.split(' ').join('+');
+    console.log(req.query);
     const url = `https://www.googleapis.com/books/v1/volumes?q=${list}&key=${process.env.GOOGLE_BOOKS_API_KEY}&langRestrict=en&orderBy=relevance`;
     let items;
 
@@ -605,6 +609,7 @@ site.post('/search', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
                       // console.log('updated User:', user);
                     });
                 } else {
+                  res.json({message:`You can only add 5 books to your Favorite's list`});
                   console.log(`You can't add more books, you reached your limits.`, `Your book limit: ${req.user.starredBookLimit}`);
                 }
               })
@@ -776,6 +781,7 @@ site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => 
 
           updatedFriends.save();
         } else {
+          res.json({message:`This user is already added to your Friends`});
           console.log('This user is already added to your Friends');
         }
 
@@ -791,6 +797,7 @@ site.post('/matches', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => 
         });
 
         console.log('You removed a Friend! friends:', updatedFriends.friends);
+        res.json({message:`You removed a Friend`});
 
         updatedFriends.save();
       }
@@ -852,9 +859,11 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
 
           if (toUser === null) {
             console.log('User not found');
+            res.json({message:`User is not found`});
             throw new Error(`User not found: The user you want to send the message to doesn't exist`);
           }
           if (message === null) {
+            res.json({message:`You didn't write anything on the message`});
             console.log(`You didn't write anything on the message`);
             throw new Error(`Empty Message: write a message to send`);
           }
@@ -881,6 +890,7 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             '_id': messageId
           });
           console.log('Message deleted!', deletedMessage._id);
+          res.json({message:'Message deleted!'});
         } else {
           let messageIds = action.messageIds;
           let deletedMessages = await Message.deleteMany({
@@ -889,6 +899,7 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
             }
           });
           console.log('Messages deleted!', deletedMessages);
+          res.json({message:'Messages deleted!'});
         }
       }
     } catch (e) {
@@ -896,7 +907,11 @@ site.post('/inbox', ensureLogin.ensureLoggedIn('/login'), (req, res, next) => {
     }
   })()
 
-  // res.render('inbox');
+  
+})
+
+site.get('/test',(req, res, next) => {
+  res.json('hello');
 })
 
 
