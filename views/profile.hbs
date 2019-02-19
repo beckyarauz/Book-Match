@@ -140,7 +140,17 @@
             </div>
 
             {{/each}}
+            {{else}}
+            <div width="100%">
+              <h3>There are no books yet</h3>
+            
+            {{#if isProfileOwner}}
+
+              <a class="btn btn-info" href="/search">Start Adding books!</a>
             {{/if}}
+            </div>
+            {{/if}}
+            
           </div>
         </div>
         <div class="tab-pane text-center gallery book-tab" id="favorite-books">

@@ -203,8 +203,14 @@ site.get('/profile', ensureLogin.ensureLoggedIn('/login'), (req, res) => {
       let friendsInfo = await User.find({
         '_id': {
           $in: user.friends
-        }
+        } 
       });
+
+      
+      if(user.bookArr.length <= 0){
+        user.bookArr = undefined;
+      }
+      console.log('bookaRR',user.bookArr);
 
       res.render('profile', {
         layout: 'private-layout',
